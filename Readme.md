@@ -13,7 +13,9 @@ To install tor from npm, run:
 $ npm install -g tor
 ```
 
-```node ./bin/tor --help```
+```./bin/tor --help```
+
+```./bin/tor missing```
 
 # License
 

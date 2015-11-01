@@ -11,7 +11,7 @@ var downloadTorrents = require('../modules/download-torrents');
 module.exports = function(program) {
 
   program
-    .command('missing <globPath>')
+    .command('missing [globPath]')
     .option('-n, --dry-run', 'Dry run', false)
     .version('0.0.1')
     .description('download all missing episodes')
@@ -24,9 +24,11 @@ module.exports = function(program) {
           findMissingEpisodes(globPath, next);
         },
         function (missingEpisodes, next) {
+          console.log('Missing %s episodes', missingEpisodes.length);
           searchTorrents(missingEpisodes, next);
         },
         function (downloadEpisodes, next) {
+          console.log('Found %s episodes on torrent sites', downloadEpisodes.length);
           var options = {
             protocol: 'http',
             host: '***REMOVED***',
@@ -36,12 +38,12 @@ module.exports = function(program) {
           }
           downloadTorrents(program.dryRun, options, '***REMOVED***', downloadEpisodes, next);
         }
-      ], function (err) {
+      ], function (err, res) {
         if (err) {
-          console.log('error', err);
+          console.log('[ERROR]', err);
           return;
         }
-        console.log('Done !');
+        console.log('Downloaded %s torrents', res.length);
       });
     });
 
