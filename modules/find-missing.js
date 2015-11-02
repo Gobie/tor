@@ -41,7 +41,7 @@ module.exports = function(globs, options, done) {
     },
     function (showsGroupedByName, next) {
       debug('shows', Object.keys(showsGroupedByName));
-      async.mapSeries(Object.keys(showsGroupedByName), function (showName, next) {
+      async.map(Object.keys(showsGroupedByName), function (showName, next) {
         var season = 1;
         var episode = 1;
         var missing = [];
@@ -92,6 +92,7 @@ module.exports = function(globs, options, done) {
             return cb();
           },
           function (err) {
+            console.log('[INFO] processed %s', showName);
             return next(err, missing);
           }
         );
