@@ -10,7 +10,7 @@ var lookup = require('../lib/lookup');
 var find = require('../lib/find');
 var formatters = require('../lib/formatters');
 
-module.exports = function(globs, done) {
+module.exports = function(globs, options, done) {
   async.waterfall([
     function (next) {
       if (globs) return find(globs, next);
@@ -53,13 +53,13 @@ module.exports = function(globs, done) {
 
             var found = _.find(showsGroupedByName[showName], {season: season, episode: episode});
             if (found) {
-              debug('already have %s %s', showName, SE);
+              debug('owned %s %s', showName, SE);
               quitOnNextSeasonJump = false;
               return cb(null, true);
             }
 
             debug('looking up %s %s', showsGroupedByName[showName][0].title, SE);
-            lookup(showsGroupedByName[showName][0].title, season, episode, function(err, found) {
+            lookup(showsGroupedByName[showName][0].title, season, episode, options, function(err, found) {
               if (err) {
                 return cb(null, false);
               }

@@ -13,15 +13,13 @@ module.exports = function(program) {
   program
     .command('missing [globPath]')
     .option('-n, --dry-run', 'Dry run', false)
+    .option('--new-series', 'New series', false)
     .version('0.0.1')
     .description('download all missing episodes')
-    .action(function (globPath, program) {
-      debug('[options] dry run', program.dryRun);
-      debug('[options] glob path', globPath);
-
+    .action(function (globPath, options) {
       async.waterfall([
         function (next) {
-          findMissingEpisodes(globPath, next);
+          findMissingEpisodes(globPath, options, next);
         },
         function (missingEpisodes, next) {
           console.log('Missing %s episodes', missingEpisodes.length);
@@ -29,14 +27,14 @@ module.exports = function(program) {
         },
         function (downloadEpisodes, next) {
           console.log('Found %s episodes on torrent sites', downloadEpisodes.length);
-          var options = {
+          var url = {
             protocol: 'http',
             host: '***REMOVED***',
             port: '***REMOVED***',
             account: '***REMOVED***',
             passwd: '***REMOVED***'
           }
-          downloadTorrents(program.dryRun, options, '***REMOVED***', downloadEpisodes, next);
+          downloadTorrents(url, '***REMOVED***', downloadEpisodes, options, next);
         }
       ], function (err, res) {
         if (err) {

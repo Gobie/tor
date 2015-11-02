@@ -19,6 +19,7 @@ module.exports = function(missingEpisodes, done) {
       }
       debug('for %s was found %s torrents', query, res.results.length);
 
+      // TODO(mbrasna) handle quality, size, duplicates, etc
       res.results = _.filter(res.results, function (torrent) {
         if (torrent.size >= MAX_SIZE) {
           debug('%s skipped, size %s > %s', torrent.title, formatters.filesize(torrent.size), formatters.filesize(MAX_SIZE));
@@ -28,10 +29,13 @@ module.exports = function(missingEpisodes, done) {
           debug('%s skipped, size %s < %s', torrent.title, formatters.filesize(torrent.size), formatters.filesize(MIN_SIZE));
           return false;
         }
+        if (/\b(french|russian)\b/i.test(torrent.title)) {
+          debug('%s skipped, blocked phrases', torrent.title);
+          return false;
+        }
         return true;
       });
 
-      // TODO(mbrasna) handle quality, size, duplicates, etc
       debug('for %s remained %s torrents', query, res.results.length);
       return next(null, {episode: missingEpisode, torrent: res.results[0]});
     });

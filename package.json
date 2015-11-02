@@ -30,6 +30,7 @@
     "humanize": "0.0.9",
     "kat-api": "0.0.3",
     "lodash": "^3.10.0",
+    "moment": "^2.10.6",
     "pad": "^0.1.0",
     "parse-torrent-name": "^0.5.4",
     "request": "^2.65.0",
