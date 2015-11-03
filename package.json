@@ -35,8 +35,7 @@
     "parse-torrent-name": "^0.5.4",
     "request": "^2.65.0",
     "syno": "^1.0.5",
-    "thepiratebay": "^0.2.5",
-    "tvinfo": "^0.1.30"
+    "thepiratebay": "^0.2.5"
   },
   "devDependencies": {}
 }
