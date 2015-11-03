@@ -12,15 +12,16 @@ module.exports = function(missingEpisodes, done) {
 
   async.map(missingEpisodes, function (missingEpisode, next) {
     var query = missingEpisode.name + ' ' + formatters.episode(missingEpisode.season, missingEpisode.episode);
-    search(query, function(err, res) {
-      if (err) {
-        debug('for %s wasn\'t found any torrent', query);
+    debug('searching for %s', query);
+    search(query, function(err, results) {
+      if (err || !results.length) {
+        debug('no torrent found for %s', query);
         return next();
       }
-      debug('for %s was found %s torrents', query, res.results.length);
+      debug('%s torrents found for %s', results.length, query);
 
       // TODO(mbrasna) handle quality, size, duplicates, etc
-      res.results = _.filter(res.results, function (torrent) {
+      var filteredResults = _.filter(results, function (torrent) {
         if (torrent.size >= MAX_SIZE) {
           debug('%s skipped, size %s > %s', torrent.title, formatters.filesize(torrent.size), formatters.filesize(MAX_SIZE));
           return false;
@@ -36,8 +37,8 @@ module.exports = function(missingEpisodes, done) {
         return true;
       });
 
-      debug('for %s remained %s torrents', query, res.results.length);
-      return next(null, {episode: missingEpisode, torrent: res.results[0]});
+      debug('%s/%s torrents remained for %s', filteredResults.length, results.length, query);
+      return next(null, {episode: missingEpisode, torrent: filteredResults[0]});
     });
   }, function (err, res) {
     done(err, _.filter(res, Boolean));
