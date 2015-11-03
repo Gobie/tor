@@ -2,7 +2,6 @@
 
 var debug = require('debug')('modules:search-torrents');
 var async = require('async');
-var _ = require('lodash')
 var search = require('../lib/search')
 var formatters = require('../lib/formatters')
 
@@ -21,7 +20,7 @@ module.exports = function(missingEpisodes, done) {
       debug('%s torrents found for %s', results.length, query);
 
       // TODO(mbrasna) handle quality, size, duplicates, etc
-      var filteredResults = _.filter(results, function (torrent) {
+      var filteredResults = (results || []).filter(function (torrent) {
         if (torrent.size >= MAX_SIZE) {
           debug('%s skipped, size %s > %s', torrent.title, formatters.filesize(torrent.size), formatters.filesize(MAX_SIZE));
           return false;
@@ -41,6 +40,6 @@ module.exports = function(missingEpisodes, done) {
       return next(null, {episode: missingEpisode, torrent: filteredResults[0]});
     });
   }, function (err, res) {
-    done(err, _.filter(res, Boolean));
+    done(err, res.filter(Boolean));
   });
 }

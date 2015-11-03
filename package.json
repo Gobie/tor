@@ -27,7 +27,6 @@
     "commander": "~2.0.0",
     "debug": "^2.2.0",
     "glob": "^5.0.13",
-    "globber": "^0.1.2",
     "humanize": "0.0.9",
     "kat-api": "0.0.3",
     "lodash": "^3.10.0",
