@@ -14,7 +14,7 @@ module.exports = function(missingEpisodes, done) {
     debug('searching for %s', query);
     search(query, function(err, results) {
       if (err || !results.length) {
-        debug('no torrent found for %s', query);
+        console.log('[INFO] episode %s wasn\'t found', query);
         return next();
       }
       debug('%s torrents found for %s', results.length, query);
@@ -37,6 +37,7 @@ module.exports = function(missingEpisodes, done) {
       });
 
       debug('%s/%s torrents remained for %s', filteredResults.length, results.length, query);
+      console.log('[INFO] episode %s was found', query);
       return next(null, {episode: missingEpisode, torrent: filteredResults[0]});
     });
   }, function (err, res) {
