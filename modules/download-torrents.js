@@ -10,7 +10,6 @@ module.exports = function (synologyOptions, destPath, downloadEpisodes, options,
   var synology = require('../lib/synology')(synologyOptions);
 
   async.mapSeries(downloadEpisodes, function (downloadEpisode, next) {
-    var query = downloadEpisode.episode.name + ' ' + formatters.episode(downloadEpisode.episode.season, downloadEpisode.episode.episode);
     var torrentLink = downloadEpisode.torrent.torrentLink
     var destination = destPath + downloadEpisode.episode.name + '/Season ' + pad(2, downloadEpisode.episode.season, '0');
 
@@ -26,7 +25,10 @@ module.exports = function (synologyOptions, destPath, downloadEpisodes, options,
     if (options.dryRun) command = 'echo "dry run"';
     exec(command, function (error, stdout, stderr) {
       if (error || stderr) return next(error || stderr);
-      console.log('[INFO] downloading %s', query);
+      var query = downloadEpisode.episode.name + ' ' + formatters.episode(downloadEpisode.episode.season, downloadEpisode.episode.episode);
+      var ratio = downloadEpisode.torrent.seeders + '/' + downloadEpisode.torrent.leechers;
+      var source = downloadEpisode.torrent.source;
+      console.log('[INFO] downloading %s [%s, %s]', query, ratio, source);
       synology.download(torrentLink, destination, options.dryRun, next);
     });
 
