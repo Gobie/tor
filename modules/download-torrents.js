@@ -28,7 +28,7 @@ module.exports = function (synologyOptions, destPath, downloadEpisodes, options,
       var query = downloadEpisode.episode.name + ' ' + formatters.episode(downloadEpisode.episode.season, downloadEpisode.episode.episode);
       var ratio = downloadEpisode.torrent.seeders + '/' + downloadEpisode.torrent.leechers;
       var source = downloadEpisode.torrent.source;
-      console.log('[INFO] downloading %s [%s, %s]', query, ratio, source);
+      console.log('[INFO] downloading %s [%s, %s]', downloadEpisode.torrent.title, ratio, source);
       synology.download(torrentLink, destination, options.dryRun, next);
     });
 
