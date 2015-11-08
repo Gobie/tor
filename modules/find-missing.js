@@ -5,12 +5,20 @@ var debug = require('debug')('modules:find-missing');
 var async = require('async');
 var pad = require('pad');
 var _ = require('lodash');
+var jsonfile = require('jsonfile');
 var parse = require('../lib/torrent-parser');
 var lookup = require('../lib/lookup');
 var find = require('../lib/find');
 var formatters = require('../lib/formatters');
 
+var lastEpisodesCache = 'last-episodes-cache.tor.json';
+
 module.exports = function(globs, options, done) {
+  var lastEpisodes = {};
+  try {
+    lastEpisodes = jsonfile.readFileSync(lastEpisodesCache);
+  } catch (e) {}
+
   async.waterfall([
     function (next) {
       if (globs) return find(globs, next);
@@ -46,15 +54,33 @@ module.exports = function(globs, options, done) {
         var episode = 1;
         var missing = [];
 
+        lastEpisodes[showName] || (lastEpisodes[showName] = []);
+        var lastEpisode = null;
+
         var quitOnNextSeasonJump = false;
         async.during(
           function (cb) {
             var SE = formatters.episode(season, episode);
 
-            var found = _.find(showsGroupedByName[showName], {season: season, episode: episode});
-            if (found) {
+            if (_.find(lastEpisodes[showName], {season: season, episode: episode})) {
+              debug('found in last episode cache %s %s', showName, SE);
+              quitOnNextSeasonJump = true;
+
+              season++;
+              episode = 0;
+              return cb(null, true);
+            }
+
+            if (_.find(showsGroupedByName[showName], {season: season, episode: episode})) {
               debug('owned %s %s', showName, SE);
               quitOnNextSeasonJump = false;
+
+              // cache last episode of season
+              if (lastEpisode) {
+                lastEpisodes[showName].push(lastEpisode);
+                lastEpisode = null
+              }
+
               return cb(null, true);
             }
 
@@ -70,6 +96,9 @@ module.exports = function(globs, options, done) {
                 // don't jump season twice
                 if (quitOnNextSeasonJump) return cb(null, false);
                 quitOnNextSeasonJump = true;
+
+                // store possible last episode of season
+                lastEpisode = {season: season, episode: episode};
 
                 season++;
                 episode = 0;
@@ -100,6 +129,7 @@ module.exports = function(globs, options, done) {
         if (err) {
           return next(err);
         }
+        jsonfile.writeFileSync(lastEpisodesCache, lastEpisodes);
         next(null, _.flatten(missing));
       });
     }
