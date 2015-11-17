@@ -3,41 +3,14 @@
 var path = require('path');
 var debug = require('debug')('modules:find-missing');
 var async = require('async');
-var pad = require('pad');
 var _ = require('lodash');
-var parse = require('../lib/torrent-parser');
 var lookup = require('../lib/lookup');
-var find = require('../lib/find');
 var formatters = require('../lib/formatters');
 
-module.exports = function(globs, options, cache, done) {
+module.exports = function(episodes, options, cache, done) {
   async.waterfall([
     function (next) {
-      if (globs) return find(globs, next);
-
-      var input = '';
-      process.stdin.setEncoding('utf8');
-      process.stdin.on('readable', function() {
-        var chunk = process.stdin.read();
-        if (chunk !== null) {
-          input += chunk;
-        }
-      });
-      process.stdin.on('end', function() {
-        next(null, input.split('\n'));
-      });
-    },
-    function (filePaths, next) {
-      var filtered = _.filter(filePaths, function (filePath) {
-        return -1 !== _.indexOf(['.avi', '.mp4', '.mpg', '.mkv'], path.extname(filePath));
-      });
-      next(null, filtered)
-    },
-    function (filePaths, next) {
-      async.map(filePaths, parse, next);
-    },
-    function (shows, next) {
-      next(null, _.groupBy(_.flatten(shows), 'path'));
+      next(null, _.groupBy(_.flatten(episodes), 'path'));
     },
     function (showsGroupedByName, next) {
       debug('shows', Object.keys(showsGroupedByName));

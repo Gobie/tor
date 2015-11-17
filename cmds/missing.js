@@ -3,6 +3,7 @@
 var debug = require('debug')('cmd:missing');
 var async = require('async');
 
+var emitEpisodes = require('../modules/emit-episodes');
 var findMissingEpisodes = require('../modules/find-missing');
 var searchTorrents = require('../modules/search-torrents');
 var downloadTorrents = require('../modules/download-torrents');
@@ -19,7 +20,11 @@ module.exports = function(program) {
     .action(function (globPath, options) {
       async.waterfall([
         function (next) {
-          findMissingEpisodes(globPath, options, cache.data, next);
+          emitEpisodes(globPath, next);
+        },
+        function (episodes, next) {
+          console.log('Found %s episodes', episodes.length);
+          findMissingEpisodes(episodes, options, cache.data, next);
         },
         function (missingEpisodes, next) {
           console.log('Missing %s episodes', missingEpisodes.length);
