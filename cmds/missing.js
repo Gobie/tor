@@ -13,7 +13,7 @@ module.exports = function(program) {
   program
     .command('missing [globPath]')
     .option('-n, --dry-run', 'Dry run', false)
-    .option('--new-series', 'New series', false)
+    .option('-d, --discover', 'Discover new series', false)
     .version('0.0.1')
     .description('download all missing episodes')
     .action(function (globPath, options) {
