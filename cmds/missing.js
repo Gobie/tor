@@ -2,11 +2,11 @@
 
 var debug = require('debug')('cmd:missing');
 var async = require('async');
-var _ = require('lodash');
 
 var findMissingEpisodes = require('../modules/find-missing');
 var searchTorrents = require('../modules/search-torrents');
 var downloadTorrents = require('../modules/download-torrents');
+var cache = require('../lib/load-config')('cache.tor.json');
 
 module.exports = function(program) {
 
@@ -19,7 +19,7 @@ module.exports = function(program) {
     .action(function (globPath, options) {
       async.waterfall([
         function (next) {
-          findMissingEpisodes(globPath, options, next);
+          findMissingEpisodes(globPath, options, cache.data, next);
         },
         function (missingEpisodes, next) {
           console.log('Missing %s episodes', missingEpisodes.length);
@@ -37,6 +37,7 @@ module.exports = function(program) {
           downloadTorrents(url, '***REMOVED***', downloadEpisodes, options, next);
         }
       ], function (err, res) {
+        cache.save();
         if (err) {
           console.log('[ERROR]', err);
           return;
