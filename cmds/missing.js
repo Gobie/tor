@@ -3,11 +3,12 @@
 var debug = require('debug')('cmd:missing');
 var async = require('async');
 
+var config = require('../config');
+var cache = require('../lib/load-config')(config.cacheFile);
 var emitEpisodes = require('../modules/emit-episodes');
 var findMissingEpisodes = require('../modules/find-missing');
 var searchTorrents = require('../modules/search-torrents');
 var downloadTorrents = require('../modules/download-torrents');
-var cache = require('../lib/load-config')('cache.tor.json');
 
 module.exports = function(program) {
 
@@ -24,11 +25,11 @@ module.exports = function(program) {
         },
         function (episodes, next) {
           console.log('Found %s episodes', episodes.length);
-          findMissingEpisodes(episodes, options, cache.data, next);
+          findMissingEpisodes(episodes, options, config, cache.data, next);
         },
         function (missingEpisodes, next) {
           console.log('Missing %s episodes', missingEpisodes.length);
-          searchTorrents(missingEpisodes, next);
+          searchTorrents(missingEpisodes, config, next);
         },
         function (downloadEpisodes, next) {
           console.log('Found %s episodes on torrent sites', downloadEpisodes.length);

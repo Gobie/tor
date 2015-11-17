@@ -7,7 +7,7 @@ var _ = require('lodash');
 var lookup = require('../lib/lookup');
 var formatters = require('../lib/formatters');
 
-module.exports = function(episodes, options, cache, done) {
+module.exports = function(episodes, options, config, cache, done) {
   async.waterfall([
     function (next) {
       next(null, _.groupBy(_.flatten(episodes), 'path'));
@@ -50,7 +50,7 @@ module.exports = function(episodes, options, cache, done) {
             }
 
             debug('looking up %s %s', showsGroupedByName[showName][0].title, SE);
-            lookup(showsGroupedByName[showName][0].title, season, episode, options, function(err, found) {
+            lookup(showsGroupedByName[showName][0].title, season, episode, options, config, function(err, found) {
               if (err) {
                 return cb(null, false);
               }
