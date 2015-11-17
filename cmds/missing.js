@@ -27,20 +27,13 @@ module.exports = function(program) {
           console.log('Found %s episodes', episodes.length);
           findMissingEpisodes(episodes, options, config, cache.data, next);
         },
-        function (missingEpisodes, next) {
-          console.log('Missing %s episodes', missingEpisodes.length);
-          searchTorrents(missingEpisodes, config, next);
+        function (episodes, next) {
+          console.log('Missing %s episodes', episodes.length);
+          searchTorrents(episodes, config, next);
         },
-        function (downloadEpisodes, next) {
-          console.log('Found %s episodes on torrent sites', downloadEpisodes.length);
-          var url = {
-            protocol: 'http',
-            host: '***REMOVED***',
-            port: '***REMOVED***',
-            account: '***REMOVED***',
-            passwd: '***REMOVED***'
-          }
-          downloadTorrents(url, '***REMOVED***', downloadEpisodes, options, next);
+        function (episodes, next) {
+          console.log('Found %s episodes on torrent sites', episodes.length);
+          downloadTorrents(episodes, options, config, next);
         }
       ], function (err, res) {
         cache.save();

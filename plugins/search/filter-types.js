@@ -1,7 +1,7 @@
 'use strict';
 
 var debug = require('debug')('plugins:search:filter-types');
-var formatters = require('../../lib/formatters')
+var formatters = require('../../lib/formatters');
 
 module.exports = {
   minSize: function (minSize) {
@@ -30,5 +30,5 @@ module.exports = {
       }
       return true;
     }
-  },
+  }
 };

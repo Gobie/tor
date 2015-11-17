@@ -6,12 +6,12 @@ var async = require('async');
 var pad = require('pad');
 var formatters = require('../lib/formatters');
 
-module.exports = function (synologyOptions, destPath, downloadEpisodes, options, done) {
-  var synology = require('../lib/synology')(synologyOptions);
+module.exports = function (episodes, options, config, done) {
+  var synology = require('../lib/synology')(config.output.synology.url);
 
-  async.mapSeries(downloadEpisodes, function (downloadEpisode, next) {
-    var torrentLink = downloadEpisode.torrent.torrentLink
-    var destination = destPath + downloadEpisode.episode.name + '/Season ' + pad(2, downloadEpisode.episode.season, '0');
+  async.mapSeries(episodes, function (episode, next) {
+    var torrentLink = episode.torrent.torrentLink
+    var destination = config.output.synology.destPath + episode.episode.name + '/Season ' + pad(2, episode.episode.season, '0');
 
     debug('creating remote directory "' + destination + '"');
     var remoteCommands = [
@@ -25,10 +25,10 @@ module.exports = function (synologyOptions, destPath, downloadEpisodes, options,
     if (options.dryRun) command = 'echo "dry run"';
     exec(command, function (error, stdout, stderr) {
       if (error || stderr) return next(error || stderr);
-      var query = downloadEpisode.episode.name + ' ' + formatters.episode(downloadEpisode.episode.season, downloadEpisode.episode.episode);
-      var ratio = downloadEpisode.torrent.seeders + '/' + downloadEpisode.torrent.leechers;
-      var source = downloadEpisode.torrent.source;
-      console.log('[INFO] downloading %s [%s, %s]', downloadEpisode.torrent.title, ratio, source);
+      var query = episode.episode.name + ' ' + formatters.episode(episode.episode.season, episode.episode.episode);
+      var ratio = episode.torrent.seeders + '/' + episode.torrent.leechers;
+      var source = episode.torrent.source;
+      console.log('[INFO] downloading %s [%s, %s]', episode.torrent.title, ratio, source);
       synology.download(torrentLink, destination, options.dryRun, next);
     });
 
