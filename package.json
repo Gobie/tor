@@ -33,6 +33,7 @@
     "moment": "^2.10.6",
     "pad": "^0.1.0",
     "parse-torrent-name": "^0.5.4",
+    "pushbullet": "^1.4.3",
     "request": "^2.65.0",
     "syno": "^1.0.5",
     "thepiratebay": "^0.2.5",
