@@ -20,6 +20,7 @@ module.exports = function(config, done) {
       }
     },
     function (filePaths, next) {
+      // TODO extract to input filters
       var filtered = _.filter(filePaths, function (filePath) {
         return -1 !== _.indexOf(['.avi', '.mp4', '.mpg', '.mkv'], path.extname(filePath));
       });

@@ -24,6 +24,7 @@ module.exports = function(program) {
           emitEpisodes(config, next);
         },
         function (episodes, next) {
+          // TODO proper logging https://www.npmjs.com/package/winston
           console.log('Found %s episodes', episodes.length);
           findMissingEpisodes(episodes, options, config, cache.data, next);
         },
