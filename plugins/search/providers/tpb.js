@@ -22,8 +22,8 @@ module.exports = function (query, done) {
         source: 'tpb'
       };
     }));
-  }).catch(function (err) {
+  }, function (err) {
     console.log('[ERROR] tpb', err);
-    done(null, [])
+    done(null, []);
   });
 }

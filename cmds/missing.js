@@ -4,7 +4,7 @@ var debug = require('debug')('cmd:missing');
 var async = require('async');
 
 var config = require('../config');
-var cache = require('../lib/load-config')(config.cacheFile);
+var cache = require('../lib/load-cache')(config.cacheFile);
 var emitEpisodes = require('../modules/emit-episodes');
 var findMissingEpisodes = require('../modules/find-missing');
 var searchTorrents = require('../modules/search-torrents');
@@ -33,7 +33,7 @@ module.exports = function(program) {
         },
         function (episodes, next) {
           console.log('Found %s episodes on torrent sites', episodes.length);
-          downloadTorrents(episodes, options, config, next);
+          downloadTorrents(episodes, options, config, cache.data, next);
         }
       ], function (err, res) {
         cache.save();
