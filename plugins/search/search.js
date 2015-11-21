@@ -1,9 +1,9 @@
 'use strict';
 
 var async = require('async');
-var kickass = require('./search/kickass');
-var tpb = require('./search/tpb');
-var limetorrents = require('./search/limetorrents');
+var kickass = require('./providers/kickass');
+var tpb = require('./providers/tpb');
+var limetorrents = require('./providers/limetorrents');
 
 module.exports = function(query, next) {
   async.parallel({

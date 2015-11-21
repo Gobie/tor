@@ -1,6 +1,6 @@
 'use strict';
 
-var debug = require('debug')('lib:search-limetorrents');
+var debug = require('debug')('plugins:search:providers:limetorrents');
 var request = require('request');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();

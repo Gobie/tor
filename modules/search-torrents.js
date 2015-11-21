@@ -2,9 +2,9 @@
 
 var debug = require('debug')('modules:search-torrents');
 var async = require('async');
-var search = require('../lib/search')
-var formatters = require('../lib/formatters')
-var filtersFactory = require('../plugins/search/filters')
+var formatters = require('../lib/formatters');
+var search = require('../plugins/search/search');
+var filtersFactory = require('../plugins/search/filters');
 
 module.exports = function(episodes, config, done) {
   var filter = filtersFactory(config.search.filters);

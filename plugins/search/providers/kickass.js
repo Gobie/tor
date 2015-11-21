@@ -1,6 +1,6 @@
 'use strict';
 
-var debug = require('debug')('lib:search-kickass');
+var debug = require('debug')('plugins:search:providers:kickass');
 var zlib = require('zlib');
 var request = require('request');
 var xml2js = require('xml2js');

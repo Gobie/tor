@@ -1,6 +1,6 @@
 'use strict';
 
-var debug = require('debug')('lib:search-tpb');
+var debug = require('debug')('plugins:search:providers:tpb');
 var bytes = require('bytes');
 var tpb = require('thepiratebay');
 tpb.setUrl('http://thepiratebay.la');
