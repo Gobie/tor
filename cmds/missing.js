@@ -13,15 +13,15 @@ var downloadTorrents = require('../modules/download-torrents');
 module.exports = function(program) {
 
   program
-    .command('missing [globPath]')
+    .command('missing')
     .option('-n, --dry-run', 'Dry run', false)
     .option('-d, --discover', 'Discover new series', false)
     .version('0.0.1')
     .description('download all missing episodes')
-    .action(function (globPath, options) {
+    .action(function (options) {
       async.waterfall([
         function (next) {
-          emitEpisodes(globPath, next);
+          emitEpisodes(config, next);
         },
         function (episodes, next) {
           console.log('Found %s episodes', episodes.length);

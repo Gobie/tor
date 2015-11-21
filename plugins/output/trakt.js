@@ -48,23 +48,26 @@ module.exports = function (pluginConfig) {
         },
         // add to collection
         function (next) {
+          var data = {
+            shows: [{
+              ids: {tvrage: config.map[episode.episode.name]},
+              seasons: [{
+                number: episode.episode.season,
+                episodes: [{number: episode.episode.episode}]
+              }]
+            }]
+          };
+
           trakt
           .import_token(cache.trakt.token)
           .then(function() {
-            var data = {
-              shows: [{
-                ids: {tvrage: config.map[episode.episode.name]},
-                seasons: [{
-                  number: episode.episode.season,
-                  episodes: [{number: episode.episode.episode}]
-                }]
-              }]
-            };
             return trakt.sync.collection.add(data);
           })
-          .then(function(data) {
-            if (data.added.episodes != 1 && data.existing.episodes != 1) {
-              console.log('[ERROR] saving episode to trakt failed', data);
+          .then(function(res) {
+            if (res.added.episodes != 1 && res.existing.episodes != 1) {
+              console.log('[ERROR] saving episode to trakt failed')
+              console.log(JSON.stringify(data));
+              console.log(JSON.stringify(res));
             }
             next();
           }, next);

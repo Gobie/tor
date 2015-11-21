@@ -5,16 +5,18 @@ var debug = require('debug')('modules:emit-episodes');
 var async = require('async');
 var _ = require('lodash');
 var parse = require('../lib/torrent-parser');
-var inputFind = require('../plugins/input/find');
-var inputStdin = require('../plugins/input/stdin');
+var glob = require('../plugins/input/glob');
+var customCommand = require('../plugins/input/customCommand');
 
-module.exports = function(globs, done) {
+module.exports = function(config, done) {
   async.waterfall([
     function (next) {
-      if (globs) {
-        inputFind(globs, next);
+      if (config.input.globs) {
+        glob(config.input.globs, next);
+      } else if (config.input.customCommand) {
+        customCommand(config.input.customCommand).exec(next);
       } else {
-        inputStdin(next);
+        console.log('[ERROR] No input specified');
       }
     },
     function (filePaths, next) {

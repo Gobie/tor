@@ -18,7 +18,8 @@ module.exports = function (episodes, options, config, cache, done) {
 
     async.parallel([
       function (next) {
-        if (options.dryRun) return next();
+        // TODO tvrage doesn't work
+        if (options.dryRun || true) return next();
         trakt.addToCollection(episode, config, cache, next);
       },
       function (next) {
