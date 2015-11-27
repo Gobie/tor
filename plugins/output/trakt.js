@@ -58,6 +58,7 @@ module.exports = function (pluginConfig) {
             }]
           };
 
+          // TODO refresh_token
           trakt
           .import_token(cache.trakt.token)
           .then(function() {
