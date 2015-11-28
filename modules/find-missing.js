@@ -18,8 +18,6 @@ module.exports = function(episodes, options, config, cache, done) {
         var season = 1;
         var episode = 1;
         var missing = [];
-
-        cache.lastEpisodes[showName] || (cache.lastEpisodes[showName] = []);
         var lastEpisode = null;
 
         var quitOnNextSeasonJump = false;
@@ -27,7 +25,7 @@ module.exports = function(episodes, options, config, cache, done) {
           function (cb) {
             var SE = formatters.episode(season, episode);
 
-            if (_.find(cache.lastEpisodes[showName], {season: season, episode: episode})) {
+            if (cache.get('series:' + showName + ':lastEpisodes:' + season) === episode) {
               debug('found in last episode cache %s %s', showName, SE);
               quitOnNextSeasonJump = true;
 
@@ -42,7 +40,7 @@ module.exports = function(episodes, options, config, cache, done) {
 
               // cache last episode of season
               if (lastEpisode) {
-                cache.lastEpisodes[showName].push(lastEpisode);
+                cache.set('series:' + showName + ':lastEpisodes:' + lastEpisode.season, lastEpisode.episode);
                 lastEpisode = null
               }
 

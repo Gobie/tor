@@ -33,7 +33,7 @@ module.exports = function (pluginConfig) {
       async.series([
         // authenticate
         function (next) {
-          if (cache.trakt.token) return next();
+          if (cache.get('trakt:token')) return next();
 
           debug('authorize on', trakt.get_url());
           open(trakt.get_url());
@@ -41,7 +41,7 @@ module.exports = function (pluginConfig) {
             if (err) return next(err);
             trakt.exchange_code(pin)
             .then(function (result) {
-              cache.trakt.token = trakt.export_token();
+              cache.set('trakt:token', trakt.export_token());
               next();
             }, next)
           });
@@ -60,7 +60,7 @@ module.exports = function (pluginConfig) {
 
           // TODO refresh_token
           trakt
-          .import_token(cache.trakt.token)
+          .import_token(cache.get('trakt:token'))
           .then(function() {
             return trakt.sync.collection.add(data);
           })

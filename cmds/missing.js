@@ -4,7 +4,6 @@ var debug = require('debug')('cmd:missing');
 var async = require('async');
 
 var config = require('../config');
-var cache = require('../lib/load-cache')(config.cacheFile);
 var emitEpisodes = require('../modules/emit-episodes');
 var findMissingEpisodes = require('../modules/find-missing');
 var searchTorrents = require('../modules/search-torrents');
@@ -26,7 +25,7 @@ module.exports = function(program) {
         function (episodes, next) {
           // TODO proper logging https://www.npmjs.com/package/winston
           console.log('Found %s episodes', episodes.length);
-          findMissingEpisodes(episodes, options, config, cache.data, next);
+          findMissingEpisodes(episodes, options, config, program.config, next);
         },
         function (episodes, next) {
           console.log('Missing %s episodes', episodes.length);
@@ -34,10 +33,10 @@ module.exports = function(program) {
         },
         function (episodes, next) {
           console.log('Found %s episodes on torrent sites', episodes.length);
-          downloadTorrents(episodes, options, config, cache.data, next);
+          downloadTorrents(episodes, options, config, program.config, next);
         }
       ], function (err, res) {
-        cache.save();
+        program.config.save();
         if (err) {
           console.log('[ERROR]', err);
           return;
