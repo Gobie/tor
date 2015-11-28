@@ -29,13 +29,13 @@ module.exports = function (pluginConfig) {
   var trakt = new Trakt(pluginConfig);
 
   return {
-    addToCollection: function(episode, config, cache, done) {
+    addToCollection: function(episode, cache, done) {
       async.series([
         // authenticate
         function (next) {
           if (cache.get('trakt:token')) return next();
 
-          debug('authorize on', trakt.get_url());
+          console.log('authorize on %s', trakt.get_url());
           open(trakt.get_url());
           enterPin(function (err, pin) {
             if (err) return next(err);
@@ -50,7 +50,7 @@ module.exports = function (pluginConfig) {
         function (next) {
           var data = {
             shows: [{
-              ids: {tvrage: config.map[episode.episode.name]},
+              ids: {tvdb: cache.get('series:' + episode.episode.name + ':info:ids:thetvdb')},
               seasons: [{
                 number: episode.episode.season,
                 episodes: [{number: episode.episode.episode}]
