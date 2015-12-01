@@ -47,8 +47,8 @@ module.exports = function(episodes, options, cache, done) {
               return cb(null, true);
             }
 
-            debug('looking up %s %s', showsGroupedByName[showName][0].title, SE);
-            lookup(showsGroupedByName[showName][0].title, season, episode, options, cache, function(err, found) {
+            debug('looking up %s %s', showName, SE);
+            lookup(showName, season, episode, options, cache, function(err, found) {
               if (err) {
                 return cb(null, false);
               }
