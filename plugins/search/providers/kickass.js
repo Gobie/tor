@@ -1,6 +1,5 @@
 'use strict';
 
-var debug = require('debug')('plugins:search:providers:kickass');
 var zlib = require('zlib');
 var request = require('request');
 var xml2js = require('xml2js');
@@ -22,14 +21,14 @@ var search = function(options, callback) {
   });
 }
 
-module.exports = function(query, done) {
-  debug('searching for %s', query);
+module.exports = function(program, query, done) {
+  program.log.debug('kat: searching for %s', query);
 
   search({
     url: 'https://kat.cr/usearch/' + encodeURIComponent(query) + '%20category%3Atv%20seeds%3A5%20is_safe%3A1/?rss=1&field=seeders&sorder=desc'
   }, function (err, results) {
     if (err) {
-      console.log('[ERROR] kickass', err);
+      program.log.error('kat', err);
       return done(null, []);
     }
     if (!results) return done(null, []);

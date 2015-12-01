@@ -1,22 +1,21 @@
 'use strict';
 
 var path = require('path');
-var debug = require('debug')('modules:emit-episodes');
 var async = require('async');
 var _ = require('lodash');
 var parse = require('../lib/torrent-parser');
 var glob = require('../plugins/input/glob');
 var customCommand = require('../plugins/input/customCommand');
 
-module.exports = function(config, done) {
+module.exports = function(program, config, done) {
   async.waterfall([
     function (next) {
       if (config.input.globs) {
         glob(config.input.globs, next);
       } else if (config.input.customCommand) {
-        customCommand(config.input.customCommand).exec(next);
+        customCommand(program, config.input.customCommand).exec(next);
       } else {
-        console.log('[ERROR] No input specified');
+        program.log.error('no input specified');
       }
     },
     function (filePaths, next) {
@@ -27,7 +26,7 @@ module.exports = function(config, done) {
       next(null, filtered)
     },
     function (filePaths, next) {
-      async.map(filePaths, parse, next);
+      async.map(filePaths, parse.bind(null, program), next);
     }
   ], done);
 }

@@ -1,16 +1,15 @@
 'use strict';
 
-var debug = require('debug')('modules:download-torrents');
 var async = require('async');
 
-module.exports = function (episodes, options, config, cache, done) {
-  var trakt = require('../plugins/output/trakt')(config.output.trakt);
-  var pushbullet = require('../plugins/output/pushbullet')(config.output.pushbullet);
-  var synology = require('../plugins/output/synology')(config.output.synology);
-  var customCommand = require('../plugins/output/customCommand')(config.output.customCommand);
+module.exports = function (program, episodes, options, config, done) {
+  var trakt = require('../plugins/output/trakt')(program, config.output.trakt);
+  var pushbullet = require('../plugins/output/pushbullet')(program, config.output.pushbullet);
+  var synology = require('../plugins/output/synology')(program, config.output.synology);
+  var customCommand = require('../plugins/output/customCommand')(program, config.output.customCommand);
 
   async.mapSeries(episodes, function (episode, next) {
-    console.log('[INFO] downloading %s [%s, %s]',
+    program.log.info('downloading %s [%s, %s]',
       episode.torrent.title,
       episode.torrent.seeders + '/' + episode.torrent.leechers,
       episode.torrent.source
@@ -19,7 +18,7 @@ module.exports = function (episodes, options, config, cache, done) {
     async.parallel([
       function (next) {
         if (options.dryRun) return next();
-        trakt.addToCollection(episode, cache, next);
+        trakt.addToCollection(episode, program.config, next);
       },
       function (next) {
         if (options.dryRun) return next();

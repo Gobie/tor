@@ -1,8 +1,6 @@
 'use strict';
 
-var debug = require('debug')('cmd:missing');
 var async = require('async');
-
 var config = require('../config');
 var emitEpisodes = require('../modules/emit-episodes');
 var findMissingEpisodes = require('../modules/find-missing');
@@ -20,28 +18,27 @@ module.exports = function(program) {
     .action(function (options) {
       async.waterfall([
         function (next) {
-          emitEpisodes(config, next);
+          emitEpisodes(program, config, next);
         },
         function (episodes, next) {
-          // TODO proper logging https://www.npmjs.com/package/winston
-          console.log('Found %s episodes', episodes.length);
-          findMissingEpisodes(episodes, options, program.config, next);
+          program.log.info('emitted %s episodes', episodes.length);
+          findMissingEpisodes(program, episodes, options, next);
         },
         function (episodes, next) {
-          console.log('Missing %s episodes', episodes.length);
-          searchTorrents(episodes, config, next);
+          program.log.info('missing %s episodes', episodes.length);
+          searchTorrents(program, episodes, config, next);
         },
         function (episodes, next) {
-          console.log('Found %s episodes on torrent sites', episodes.length);
-          downloadTorrents(episodes, options, config, program.config, next);
+          program.log.info('found %s episodes on torrent sites', episodes.length);
+          downloadTorrents(program, episodes, options, config, next);
         }
       ], function (err, res) {
         program.config.save();
         if (err) {
-          console.log('[ERROR]', err);
+          program.log.error(err);
           return;
         }
-        console.log('Downloaded %s torrents', res.length);
+        program.log.info('downloaded %s torrents', res.length);
       });
     });
 

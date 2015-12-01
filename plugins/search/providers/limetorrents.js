@@ -1,6 +1,5 @@
 'use strict';
 
-var debug = require('debug')('plugins:search:providers:limetorrents');
 var request = require('request');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
@@ -26,14 +25,14 @@ var search = function(options, callback) {
   });
 }
 
-module.exports = function (query, done) {
-  debug('searching for %s', query);
+module.exports = function (program, query, done) {
+  program.log.debug('limetorrents: searching for %s', query);
 
   search({
     url: 'https://www.limetorrents.cc/searchrss/' + encodeURIComponent(query) + '/'
   }, function (err, results) {
     if (err) {
-      console.log('[ERROR] limetorrents', err);
+      program.log.error('limetorrents', err);
       return done(null, []);
     }
 

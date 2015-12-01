@@ -1,6 +1,5 @@
 'use strict';
 
-var debug = require('debug')('plugins:output:trakt');
 var Trakt = require('trakt.tv');
 var async = require('async');
 var open = require('open');
@@ -25,7 +24,7 @@ var enterPin = function(done) {
   });
 }
 
-module.exports = function (pluginConfig) {
+module.exports = function (program, pluginConfig) {
   var trakt = new Trakt(pluginConfig);
 
   return {
@@ -35,7 +34,7 @@ module.exports = function (pluginConfig) {
         function (next) {
           if (cache.get('trakt:token')) return next();
 
-          console.log('authorize on %s', trakt.get_url());
+          program.log.info('trakt: authorize on %s', trakt.get_url());
           open(trakt.get_url());
           enterPin(function (err, pin) {
             if (err) return next(err);
@@ -66,9 +65,7 @@ module.exports = function (pluginConfig) {
           })
           .then(function(res) {
             if (res.added.episodes != 1 && res.existing.episodes != 1) {
-              console.log('[ERROR] saving episode to trakt failed')
-              console.log(JSON.stringify(data));
-              console.log(JSON.stringify(res));
+              program.log.error('trakt: saving episode failed', data, res);
             }
             next();
           }, next);

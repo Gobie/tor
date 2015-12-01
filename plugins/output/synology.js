@@ -1,9 +1,8 @@
 'use strict';
 
-var debug = require('debug')('plugins:output:synology');
 var Syno = require('syno');
 
-module.exports = function (pluginConfig) {
+module.exports = function (program, pluginConfig) {
   var syno = new Syno(pluginConfig.options);
 
   return {
@@ -13,10 +12,10 @@ module.exports = function (pluginConfig) {
         destination: pluginConfig.dest(episode)
       };
 
-      debug('add to queue', params);
+      program.log.debug('synology: added to queue', params);
       syno.dl.createTask(params, function (err, res) {
         if (err && err.code === 100) {
-          console.log('[ERROR] 100 from synology for %s', params);
+          program.log.error('100 error from synology for %s', params);
         }
         done(err, res);
       });

@@ -1,12 +1,11 @@
 'use strict';
 
-var debug = require('debug')('plugins:search:providers:tpb');
 var bytes = require('bytes');
 var tpb = require('thepiratebay');
 tpb.setUrl('http://thepiratebay.la');
 
-module.exports = function (query, done) {
-  debug('searching for %s', query);
+module.exports = function (program, query, done) {
+  program.log.debug('tpb: searching for %s', query);
 
   tpb.search(query, {
     category: 205,
@@ -23,7 +22,7 @@ module.exports = function (query, done) {
       };
     }));
   }, function (err) {
-    console.log('[ERROR] tpb', err);
+    program.log.error('tpb', err);
     done(null, []);
   });
 }

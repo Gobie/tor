@@ -1,18 +1,18 @@
 'use strict';
 
-var debug = require('debug')('plugins:search:filters');
 var _ = require('lodash');
 var filterTypes = require('./filter-types');
 
 /**
  * Filters are an array of object {type, args}
  */
-module.exports = function(filters) {
+module.exports = function(program, filters) {
+  var filterTypesFactory = filterTypes(program);
   var data = [];
   var filter = filters.reduce(function (acc, opts) {
-    var filterFactory = filterTypes[opts.type];
+    var filterFactory = filterTypesFactory[opts.type];
     if (!filterFactory) {
-      console.log('[CONFIG] Unknown filter type', opts.type);
+      program.log.error('unknown filter type', opts.type);
       return acc;
     }
     // create filter with args from config
