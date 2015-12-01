@@ -14,7 +14,12 @@ module.exports = function (pluginConfig) {
       };
 
       debug('add to queue', params);
-      syno.dl.createTask(params, done);
+      syno.dl.createTask(params, function (err, res) {
+        if (err && err.code === 100) {
+          console.log('[ERROR] 100 from synology for %s', params);
+        }
+        done(err, res);
+      });
     }
   }
 };
