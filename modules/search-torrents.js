@@ -19,7 +19,7 @@ module.exports = function(program, episodes, config, done) {
       program.log.debug('%s torrents found for %s', torrents.length, query);
 
       var acceptedTorrents = filter(torrents);
-      program.log.debug('%s/%s torrents remained for %s', acceptedTorrents.length, torrents.length, query);
+      program.log.debug('%s out of %s torrents remained for %s', acceptedTorrents.length, torrents.length, query);
       program.log.info('episode %s was found', query);
 
       return next(null, {episode: episode, torrent: acceptedTorrents[0]});

@@ -36,13 +36,16 @@ module.exports = function (program, query, done) {
       return done(null, []);
     }
 
-    done(null, (results.rss.channel[0].item || []).map(function (release) {
+    var torrents = results.rss.channel[0].item || [];
+    program.log.debug('limetorrents: found %s torrents for %s', torrents.length, query);
+
+    done(null, torrents.map(function (torrent) {
       return {
-        title: release['title'][0],
-        size: release['size'][0],
-        torrentLink: release['enclosure'][0]['$']['url'],
-        seeders: release['description'][0].replace(/^Seeds\D+(\d+).+$/, '$1'),
-        leechers: release['description'][0].replace(/^.+Leechers\D+(\d+)$/, '$1'),
+        title: torrent['title'][0],
+        size: torrent['size'][0],
+        torrentLink: torrent['enclosure'][0]['$']['url'],
+        seeders: torrent['description'][0].replace(/^Seeds\D+(\d+).+$/, '$1'),
+        leechers: torrent['description'][0].replace(/^.+Leechers\D+(\d+)$/, '$1'),
         source: 'limetorrents'
       };
     }));

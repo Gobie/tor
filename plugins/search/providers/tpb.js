@@ -11,13 +11,16 @@ module.exports = function (program, query, done) {
     category: 205,
     orderBy: 7
   }).then(function (results) {
-    done(null, (results || []).map(function (result) {
+    var torrents = results || [];
+    program.log.debug('tpb: found %s torrents for %s', torrents.length, query);
+
+    done(null, torrents.map(function (torrent) {
       return {
-        title: result['name'],
-        size: bytes(result['size'].replace(/[i\s]/g, '')),
-        torrentLink: result['magnetLink'],
-        seeders: result['seeders'],
-        leechers: result['leechers'],
+        title: torrent['name'],
+        size: bytes(torrent['size'].replace(/[i\s]/g, '')),
+        torrentLink: torrent['magnetLink'],
+        seeders: torrent['seeders'],
+        leechers: torrent['leechers'],
         source: 'tpb'
       };
     }));

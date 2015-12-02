@@ -33,13 +33,16 @@ module.exports = function(program, query, done) {
     }
     if (!results) return done(null, []);
 
-    done(null, (results.rss.channel[0].item || []).map(function(release) {
+    var torrents = results.rss.channel[0].item || [];
+    program.log.debug('kat: found %s torrents for %s', torrents.length, query);
+
+    done(null, torrents.map(function(torrent) {
       return {
-        title: release['title'][0],
-        size: release['torrent:contentLength'][0],
-        torrentLink: release['enclosure'][0]['$']['url'],
-        seeders: release['torrent:seeds'][0],
-        leechers: release['torrent:peers'][0],
+        title: torrent['title'][0],
+        size: torrent['torrent:contentLength'][0],
+        torrentLink: torrent['enclosure'][0]['$']['url'],
+        seeders: torrent['torrent:seeds'][0],
+        leechers: torrent['torrent:peers'][0],
         source: 'kickass'
       }
     }));

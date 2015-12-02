@@ -1,6 +1,7 @@
 'use strict';
 
 var async = require('async');
+var _ = require('lodash');
 var kickass = require('./providers/kickass');
 var tpb = require('./providers/tpb');
 var limetorrents = require('./providers/limetorrents');
@@ -25,10 +26,9 @@ module.exports = function(program, query, next) {
       return;
     }
 
-    var torrents = [].concat(res.tpb, res.kickass, res.limetorrents);
-    torrents.sort(function(a, b) {
-      return b.seeders - a.seeders;
-    });
-    next(null , torrents);
+    var torrents = _([])
+      .concat(res.tpb, res.kickass, res.limetorrents)
+      .sortByOrder(['seeders'], ['desc']);
+    next(null , torrents.value());
   });
 }
