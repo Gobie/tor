@@ -20,9 +20,15 @@ module.exports = function(program, config, done) {
     },
     function (filePaths, next) {
       // TODO extract to input filters
+      var allowedExt = ['.avi', '.mp4', '.mpg', '.mkv'];
+      var regex = /(Extras|Sample|E00)/;
+
+      program.log.debug('%s files found', filePaths.length);
       var filtered = _.filter(filePaths, function (filePath) {
-        return -1 !== _.indexOf(['.avi', '.mp4', '.mpg', '.mkv'], path.extname(filePath));
+        return -1 !== _.indexOf(allowedExt, path.extname(filePath)) && !regex.test(filePath);
       });
+
+      program.log.debug('%s files remained after filter', filtered.length);
       next(null, filtered)
     },
     function (filePaths, next) {
