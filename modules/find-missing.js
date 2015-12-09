@@ -1,8 +1,8 @@
 'use strict';
 
-var path = require('path');
 var async = require('async');
 var _ = require('lodash');
+var moment = require('moment');
 var lookup = require('../lib/lookup');
 var formatters = require('../lib/formatters');
 
@@ -14,88 +14,43 @@ module.exports = function(program, episodes, options, done) {
     function (showsGroupedByName, next) {
       program.log.debug('processing shows', Object.keys(showsGroupedByName));
       async.mapSeries(Object.keys(showsGroupedByName), function (showName, next) {
-        var season = 1;
-        var episode = 1;
-        var missing = [];
-        var lastEpisode = null;
 
-        var quitOnNextSeasonJump = false;
-        async.during(
-          function (cb) {
-            var SE = formatters.episode(season, episode);
-
-            if (program.config.get('series:' + showName + ':lastEpisodes:' + season) === episode) {
-              program.log.debug('found in last episode cache %s %s', showName, SE);
-              quitOnNextSeasonJump = true;
-
-              season++;
-              episode = 0;
-              return cb(null, true);
-            }
-
-            if (_.find(showsGroupedByName[showName], {season: season, episode: episode})) {
-              program.log.debug('owned %s %s', showName, SE);
-              quitOnNextSeasonJump = false;
-
-              // cache last episode of season
-              if (lastEpisode) {
-                program.config.set('series:' + showName + ':lastEpisodes:' + lastEpisode.season, lastEpisode.episode);
-                lastEpisode = null
-              }
-
-              return cb(null, true);
-            }
-
-            if (program.config.get('series:' + showName + ':info:status') === 'Ended') {
-              program.log.debug('serie %s ended', showName);
-              return cb(null, false);
-            }
-
-            program.log.debug('looking up %s %s', showName, SE);
-            lookup(program, showName, season, episode, options, function(err, found) {
-              if (err) {
-                return cb(null, false);
-              }
-
-              // maybe end of season, jump to next one
-              if (!found) {
-                program.log.debug('look up %s %s failed', showName, SE);
-                // don't jump season twice
-                if (quitOnNextSeasonJump) return cb(null, false);
-                quitOnNextSeasonJump = true;
-
-                // store possible last episode of season
-                lastEpisode = {season: season, episode: episode};
-
-                season++;
-                episode = 0;
-                return cb(null, true);
-              }
-
-              quitOnNextSeasonJump = false;
-              program.log.debug('look up %s %s suceeded', showName, SE);
-              // missing episode
-              missing.push({
-                name: showName,
-                season: season,
-                episode: episode
-              });
-              return cb(null, true);
-            });
+        async.waterfall([
+          function (next) {
+            lookup(program, showName, options, next);
           },
-          function (cb) {
-            episode++;
-            return cb();
-          },
-          function (err) {
-            program.log.info('processed %s', showName);
-            return next(err, missing);
+          function (episodes, next) {
+            async.reduce(episodes, [], function (missing, episode, next) {
+              var SE = formatters.episode(episode.season, episode.episode);
+
+              if(!episode.airstamp || moment(episode.airstamp).isAfter(moment())) {
+                program.log.debug('not yet aired %s %s', showName, SE);
+              } else if (_.find(showsGroupedByName[showName], {season: episode.season, episode: episode.episode})) {
+                program.log.debug('owned %s %s', showName, SE);
+              } else {
+                program.log.info('missing %s %s', showName, SE);
+                missing.push({
+                  name: showName,
+                  season: episode.season,
+                  episode: episode.episode
+                });
+              }
+              next(null, missing);
+            }, next);
           }
-        );
-      }, function (err, missing) {
-        if (err) {
-          return next(err);
-        }
+        ], function (e, missing) {
+          if (e === 'unknown serie') return next(null, []);
+          if (e) return next(e);
+          if (missing.length === 0) {
+            program.log.debug('%s (no missing)', showName);
+          } else {
+            program.log.info('%s (%s missing)', showName, missing.length);
+          }
+          next(null, missing);
+        });
+
+      }, function (e, missing) {
+        if (e) return next(e);
         next(null, _.flatten(missing));
       });
     }

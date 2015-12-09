@@ -13,6 +13,7 @@ module.exports = function(program) {
     .command('missing')
     .option('-n, --dry-run', 'Dry run', false)
     .option('--discover', 'Discover new series', false)
+    .option('--ignore-cache', 'Ignore episode cache', false)
     .version('0.0.1')
     .description('download all missing episodes')
     .action(function (options) {
