@@ -12,7 +12,7 @@ module.exports = function(program) {
   program
     .command('missing')
     .option('-n, --dry-run', 'Dry run', false)
-    .option('-d, --discover', 'Discover new series', false)
+    .option('--discover', 'Discover new series', false)
     .version('0.0.1')
     .description('download all missing episodes')
     .action(function (options) {
