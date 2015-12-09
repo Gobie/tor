@@ -8,7 +8,7 @@ module.exports = function (program, pluginConfig) {
       var command = pluginConfig.cmd;
       program.log.debug('execute command', command);
       exec(command, {maxBuffer: 10*1024*1024}, function (e, stdout, stderr) {
-        if (e || stderr) return done(e || stderr);
+        if (e || stderr) return done({command: command, e: e, stderr: stderr});
         done(null, stdout.split(/\n/));
       });
     }

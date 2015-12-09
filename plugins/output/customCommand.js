@@ -8,7 +8,7 @@ module.exports = function (program, pluginConfig) {
       var command = pluginConfig.cmd(episode);
       program.log.debug('execute command', command);
       exec(command, function (e, stdout, stderr) {
-        if (e || stderr) return done(e || stderr);
+        if (e || stderr) return done({command: command, e: e, stderr: stderr});
         done();
       });
     }
