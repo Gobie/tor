@@ -26,7 +26,7 @@ module.exports = function(program, config, done) {
       next(null, filtered)
     },
     function (filePaths, next) {
-      async.map(filePaths, parse.bind(null, program), next);
+      async.map(filePaths, parse.bind(null, program, config), next);
     }
   ], done);
 }
