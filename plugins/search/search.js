@@ -18,11 +18,11 @@ module.exports = function(program, query, next) {
       return next(null, []);
       limetorrents(program, query, next); // TODO empty search
     },
-  }, function (err, res) {
+  }, function (e, res) {
     // No error should ever get here, search plugins should always return []
-    if (err) {
-      program.log.error('searching torrents', err);
-      next(err);
+    if (e) {
+      program.log.error('searching torrents', e);
+      next(e);
       return;
     }
 

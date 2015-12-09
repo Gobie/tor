@@ -20,9 +20,7 @@ var search = function(options, callback) {
       }
     });
   });
-  req.on('error', function(err) {
-    callback(err);
-  });
+  req.on('error', callback);
 }
 
 module.exports = function (program, query, done) {
@@ -30,9 +28,9 @@ module.exports = function (program, query, done) {
 
   search({
     url: 'https://www.limetorrents.cc/searchrss/' + encodeURIComponent(query) + '/'
-  }, function (err, results) {
-    if (err) {
-      program.log.error('limetorrents', err);
+  }, function (e, results) {
+    if (e) {
+      program.log.error('limetorrents', e);
       return done(null, []);
     }
 

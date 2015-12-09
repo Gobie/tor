@@ -26,9 +26,9 @@ module.exports = function(program, query, done) {
 
   search({
     url: 'https://kat.cr/usearch/' + encodeURIComponent(query) + '%20category%3Atv%20seeds%3A5%20is_safe%3A1/?rss=1&field=seeders&sorder=desc'
-  }, function (err, results) {
-    if (err) {
-      program.log.error('kat', err);
+  }, function (e, results) {
+    if (e) {
+      program.log.error('kat', e);
       return done(null, []);
     }
     if (!results) return done(null, []);

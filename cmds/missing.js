@@ -21,24 +21,21 @@ module.exports = function(program) {
           emitEpisodes(program, config, next);
         },
         function (episodes, next) {
-          program.log.info('emitted %s episodes', episodes.length);
+          program.log.info('[stats] emitted %s episodes', episodes.length);
           findMissingEpisodes(program, episodes, options, next);
         },
         function (episodes, next) {
-          program.log.info('missing %s episodes', episodes.length);
+          program.log.info('[stats] missing %s episodes', episodes.length);
           searchTorrents(program, episodes, config, next);
         },
         function (episodes, next) {
-          program.log.info('found %s episodes on torrent sites', episodes.length);
+          program.log.info('[stats] found %s episodes on torrent sites', episodes.length);
           downloadTorrents(program, episodes, options, config, next);
         }
-      ], function (err, res) {
+      ], function (e, episodes) {
         program.config.save();
-        if (err) {
-          program.log.error(err);
-          return;
-        }
-        program.log.info('downloaded %s torrents', res.length);
+        if (e) return program.log.error(e);
+        program.log.info('[stats] downloaded %s torrents', episodes.length);
       });
     });
 

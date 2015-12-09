@@ -11,8 +11,8 @@ module.exports = function(program, episodes, config, done) {
   async.map(episodes, function (episode, next) {
     var query = episode.name + ' ' + formatters.episode(episode.season, episode.episode);
     program.log.debug('searching for %s', query);
-    search(program, query, function(err, torrents) {
-      if (err || !torrents.length) {
+    search(program, query, function(e, torrents) {
+      if (e || !torrents.length) {
         program.log.info('episode %s wasn\'t found', query);
         return next();
       }
@@ -24,7 +24,7 @@ module.exports = function(program, episodes, config, done) {
 
       return next(null, {episode: episode, torrent: acceptedTorrents[0]});
     });
-  }, function (err, res) {
-    done(err, res.filter(Boolean));
+  }, function (e, res) {
+    done(e, (res || []).filter(Boolean));
   });
 }

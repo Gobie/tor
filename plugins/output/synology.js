@@ -13,11 +13,11 @@ module.exports = function (program, pluginConfig) {
       };
 
       program.log.debug('synology: added to queue', params);
-      syno.dl.createTask(params, function (err, res) {
-        if (err && err.code === 100) {
-          program.log.error('100 error from synology for %s', params);
+      syno.dl.createTask(params, function (e, res) {
+        if (e && e.code === 100) {
+          program.log.error('100 error from synology for %s', params, e);
         }
-        done(err, res);
+        done(e, res);
       });
     }
   }

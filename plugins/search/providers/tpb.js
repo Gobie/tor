@@ -24,8 +24,8 @@ module.exports = function (program, query, done) {
         source: 'tpb'
       };
     }));
-  }, function (err) {
-    program.log.error('tpb', err);
+  }, function (e) {
+    program.log.error('tpb', e);
     done(null, []);
   });
 }

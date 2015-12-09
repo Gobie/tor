@@ -18,8 +18,8 @@ var enterPin = function(done) {
 
   var prompt = require('prompt');
   prompt.start();
-  prompt.get(schema, function (err, result) {
-    if (err) return done(err);
+  prompt.get(schema, function (e, result) {
+    if (e) return done(e);
     done(null, result.pin);
   });
 }
@@ -36,8 +36,8 @@ module.exports = function (program, pluginConfig) {
 
           program.log.info('trakt: authorize on %s', trakt.get_url());
           open(trakt.get_url());
-          enterPin(function (err, pin) {
-            if (err) return next(err);
+          enterPin(function (e, pin) {
+            if (e) return next(e);
             trakt.exchange_code(pin)
             .then(function (result) {
               cache.set('trakt:token', trakt.export_token());
