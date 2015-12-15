@@ -40,10 +40,10 @@ module.exports = function (program, query, done) {
     done(null, torrents.map(function (torrent) {
       return {
         title: torrent['title'][0],
-        size: torrent['size'][0],
+        size: +torrent['size'][0],
         torrentLink: torrent['enclosure'][0]['$']['url'],
-        seeders: torrent['description'][0].replace(/^Seeds\D+(\d+).+$/, '$1'),
-        leechers: torrent['description'][0].replace(/^.+Leechers\D+(\d+)$/, '$1'),
+        seeders: +torrent['description'][0].replace(/^Seeds\D+(\d+).+$/, '$1'),
+        leechers: +torrent['description'][0].replace(/^.+Leechers\D+(\d+)$/, '$1'),
         source: 'limetorrents'
       };
     }));

@@ -39,10 +39,10 @@ module.exports = function(program, query, done) {
     done(null, torrents.map(function(torrent) {
       return {
         title: torrent['title'][0],
-        size: torrent['torrent:contentLength'][0],
+        size: +torrent['torrent:contentLength'][0],
         torrentLink: torrent['enclosure'][0]['$']['url'],
-        seeders: torrent['torrent:seeds'][0],
-        leechers: torrent['torrent:peers'][0],
+        seeders: +torrent['torrent:seeds'][0],
+        leechers: +torrent['torrent:peers'][0],
         source: 'kickass'
       }
     }));

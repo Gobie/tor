@@ -17,10 +17,10 @@ module.exports = function (program, query, done) {
     done(null, torrents.map(function (torrent) {
       return {
         title: torrent['name'],
-        size: bytes(torrent['size'].replace(/[i\s]/g, '')),
+        size: +bytes(torrent['size'].replace(/[i\s]/g, '')),
         torrentLink: torrent['magnetLink'],
-        seeders: torrent['seeders'],
-        leechers: torrent['leechers'],
+        seeders: +torrent['seeders'],
+        leechers: +torrent['leechers'],
         source: 'tpb'
       };
     }));
