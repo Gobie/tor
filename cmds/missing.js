@@ -9,17 +9,22 @@ var downloadTorrents = require('../modules/download-torrents');
 
 module.exports = function(program) {
 
+  var addSeriesCollector = function (val, memo) {
+    memo.push(val);
+    return memo;
+  }
+
   program
     .command('missing')
     .option('-n, --dry-run', 'Dry run', false)
     .option('--discover', 'Discover new series', false)
     .option('--ignore-cache', 'Ignore episode cache', false)
-    .version('0.0.1')
+    .option('--add-series <value>', 'Add series', addSeriesCollector, [])
     .description('download all missing episodes')
     .action(function (options) {
       async.waterfall([
         function (next) {
-          emitEpisodes(program, config, next);
+          emitEpisodes(program, config, options, next);
         },
         function (episodes, next) {
           program.log.info('[stats] emitted %s episodes', episodes.length);
