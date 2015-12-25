@@ -4,20 +4,15 @@ var async = require('async');
 var _ = require('lodash');
 var kickass = require('./providers/kickass');
 var tpb = require('./providers/tpb');
-var limetorrents = require('./providers/limetorrents');
 
-module.exports = function(program, query, next) {
+module.exports = function (program, query, next) {
   async.parallel({
-    kickass: function(next) {
+    kickass: function (next) {
       kickass(program, query, next);
     },
-    tpb: function(next) {
+    tpb: function (next) {
       tpb(program, query, next);
-    },
-    limetorrents: function(next) {
-      return next(null, []);
-      limetorrents(program, query, next); // TODO empty search
-    },
+    }
   }, function (e, res) {
     // No error should ever get here, search plugins should always return []
     if (e) {
@@ -27,8 +22,8 @@ module.exports = function(program, query, next) {
     }
 
     var torrents = _([])
-      .concat(res.tpb, res.kickass, res.limetorrents)
+      .concat(res.tpb, res.kickass)
       .sortByOrder(['seeders'], ['desc']);
-    next(null , torrents.value());
+    next(null, torrents.value());
   });
-}
+};

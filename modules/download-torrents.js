@@ -17,22 +17,34 @@ module.exports = function (program, episodes, options, config, done) {
 
     async.parallel([
       function (next) {
-        if (options.dryRun) return next();
+        if (options.dryRun) {
+          return next();
+        }
+
         trakt.addToCollection(episode, program.config, next);
       },
       function (next) {
-        if (options.dryRun) return next();
+        if (options.dryRun) {
+          return next();
+        }
+
         pushbullet.push(episode, next);
       },
       function (next) {
-        if (options.dryRun) return next();
+        if (options.dryRun) {
+          return next();
+        }
+
         customCommand.exec(episode, next);
       },
       function (next) {
-        if (options.dryRun) return next();
+        if (options.dryRun) {
+          return next();
+        }
+
         synology.download(episode, next);
       }
     ], next);
   }, done);
-}
+};
 

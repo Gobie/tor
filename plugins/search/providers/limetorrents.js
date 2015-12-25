@@ -4,15 +4,15 @@ var request = require('request');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 
-var search = function(options, callback) {
+var search = function (options, callback) {
   var req = request(options);
-  req.on('response', function(res) {
+  req.on('response', function (res) {
     var chunks = [];
-    res.on('data', function(chunk) {
+    res.on('data', function (chunk) {
       chunks.push(chunk);
     });
 
-    res.on('end', function() {
+    res.on('end', function () {
       try {
         parser.parseString(Buffer.concat(chunks).toString(), callback);
       } catch (e) {
@@ -21,7 +21,7 @@ var search = function(options, callback) {
     });
   });
   req.on('error', callback);
-}
+};
 
 module.exports = function (program, query, done) {
   program.log.debug('limetorrents: searching for %s', query);
@@ -39,13 +39,13 @@ module.exports = function (program, query, done) {
 
     done(null, torrents.map(function (torrent) {
       return {
-        title: torrent['title'][0],
-        size: +torrent['size'][0],
-        torrentLink: torrent['enclosure'][0]['$']['url'],
-        seeders: +torrent['description'][0].replace(/^Seeds\D+(\d+).+$/, '$1'),
-        leechers: +torrent['description'][0].replace(/^.+Leechers\D+(\d+)$/, '$1'),
+        title: torrent.title[0],
+        size: Number(torrent.size[0]),
+        torrentLink: torrent.enclosure[0].$.url,
+        seeders: Number(torrent.description[0].replace(/^Seeds\D+(\d+).+$/, '$1')),
+        leechers: Number(torrent.description[0].replace(/^.+Leechers\D+(\d+)$/, '$1')),
         source: 'limetorrents'
       };
     }));
   });
-}
+};

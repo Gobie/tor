@@ -6,7 +6,7 @@ var filterTypes = require('./filter-types');
 /**
  * Filters are an array of object {type, args}
  */
-module.exports = function(program, filters) {
+module.exports = function (program, filters) {
   var filterTypesFactory = filterTypes(program);
   var data = [];
   var filter = filters.reduce(function (acc, opts) {

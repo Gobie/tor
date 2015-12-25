@@ -16,11 +16,11 @@ module.exports = function (program, query, done) {
 
     done(null, torrents.map(function (torrent) {
       return {
-        title: torrent['name'],
-        size: +bytes(torrent['size'].replace(/[i\s]/g, '')),
-        torrentLink: torrent['magnetLink'],
-        seeders: +torrent['seeders'],
-        leechers: +torrent['leechers'],
+        title: torrent.name,
+        size: Number(bytes(torrent.size.replace(/[i\s]/g, ''))),
+        torrentLink: torrent.magnetLink,
+        seeders: Number(torrent.seeders),
+        leechers: Number(torrent.leechers),
         source: 'tpb'
       };
     }));
@@ -28,4 +28,4 @@ module.exports = function (program, query, done) {
     program.log.error('tpb', e);
     done(null, []);
   });
-}
+};

@@ -6,7 +6,7 @@ module.exports = function (program, pluginConfig) {
   var syno = new Syno(pluginConfig.options);
 
   return {
-    download: function(episode, done) {
+    download: function (episode, done) {
       var params = {
         uri: episode.torrent.torrentLink,
         destination: pluginConfig.dest(episode)
@@ -20,5 +20,5 @@ module.exports = function (program, pluginConfig) {
         done(e, res);
       });
     }
-  }
+  };
 };

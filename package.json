@@ -8,7 +8,8 @@
   },
   "scripts": {
     "start": "./bin/tor missing",
-    "test": "mocha -R spec"
+    "test": "xo && mocha --reporter spec --bail --check-leaks",
+    "secure": "nsp check"
   },
   "author": {
     "name": "Michal Brašna",
@@ -42,5 +43,19 @@
     "trakt.tv": "^1.0.3",
     "xml2js": "^0.4.15"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "mocha": "^2.3.4",
+    "nsp": "^2.2.0",
+    "xo": "^0.12.1"
+  },
+  "xo": {
+    "space": true,
+    "envs": [
+      "node",
+      "mocha"
+    ],
+    "ignores": [
+      "config.js"
+    ]
+  }
 }

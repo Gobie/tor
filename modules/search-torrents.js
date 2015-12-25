@@ -5,13 +5,13 @@ var formatters = require('../lib/formatters');
 var search = require('../plugins/search/search');
 var filtersFactory = require('../plugins/search/filters');
 
-module.exports = function(program, episodes, config, done) {
+module.exports = function (program, episodes, config, done) {
   var filter = filtersFactory(program, config.search.filters);
 
   async.map(episodes, function (episode, next) {
     var query = episode.name + ' ' + formatters.episode(episode.season, episode.episode);
     program.log.debug('searching for %s', query);
-    search(program, query, function(e, torrents) {
+    search(program, query, function (e, torrents) {
       if (e || !torrents.length) {
         program.log.info('episode %s wasn\'t found', query);
         return next();
@@ -27,4 +27,4 @@ module.exports = function(program, episodes, config, done) {
   }, function (e, res) {
     done(e, (res || []).filter(Boolean));
   });
-}
+};

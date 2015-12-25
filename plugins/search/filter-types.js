@@ -11,7 +11,7 @@ module.exports = function (program) {
           return false;
         }
         return true;
-      }
+      };
     },
     maxSize: function (maxSize) {
       return function (torrent) {
@@ -20,7 +20,7 @@ module.exports = function (program) {
           return false;
         }
         return true;
-      }
+      };
     },
     regex: function (regex) {
       return function (torrent) {
@@ -29,7 +29,7 @@ module.exports = function (program) {
           return false;
         }
         return true;
-      }
+      };
     }
-  }
-}
+  };
+};

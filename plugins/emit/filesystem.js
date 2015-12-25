@@ -7,7 +7,7 @@ var parse = require('../../lib/torrent-parser');
 var glob = require('../input/glob');
 var customCommand = require('../input/customCommand');
 
-module.exports = function(program, config, done) {
+module.exports = function (program, config, done) {
   async.waterfall([
     function (next) {
       if (config.input.globs) {
@@ -25,14 +25,14 @@ module.exports = function(program, config, done) {
 
       program.log.debug('%s files found', filePaths.length);
       var filtered = _.filter(filePaths, function (filePath) {
-        return -1 !== _.indexOf(allowedExt, path.extname(filePath)) && !regex.test(filePath);
+        return _.indexOf(allowedExt, path.extname(filePath)) !== -1 && !regex.test(filePath);
       });
 
       program.log.debug('%s files remained after filter', filtered.length);
-      next(null, filtered)
+      next(null, filtered);
     },
     function (filePaths, next) {
       async.map(filePaths, parse.bind(null, program, config), next);
     }
   ], done);
-}
+};
