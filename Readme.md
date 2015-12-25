@@ -3,7 +3,14 @@ tor
 
 # Description
 
-Flexget alternative
+Simple tool for automatically downloading series. It is simple Flexget alternative for basic operations.
+
+- emit episodes from filesystem/custom command
+- find missing episodes (tvmaze)
+- search episodes on torrents (tpb, kat)
+- push torrents/magnet URIs to Synology's download station
+- update trakt.tv
+- push to pushbullet
 
 # Usage
 
@@ -13,9 +20,9 @@ To install tor from npm, run:
 $ npm install -g tor
 ```
 
-```./bin/tor --help```
+```tor --help```
 
-```./bin/tor missing```
+```tor missing```
 
 # License
 
