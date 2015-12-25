@@ -39,6 +39,7 @@ module.exports = function(program) {
           downloadTorrents(program, episodes, options, config, next);
         }
       ], function (e, episodes) {
+        // TODO remove series, which were not accessed in 30 days
         program.config.save();
         if (e) return program.log.error(e);
         program.log.info('[stats] downloaded %s torrents', episodes.length);
