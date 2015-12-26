@@ -65,10 +65,11 @@ module.exports = function (program, pluginConfig) {
             }]
           };
 
-          // TODO refresh_token
           trakt
           .import_token(cache.get('trakt:token'))
-          .then(function () {
+          .then(function (token) {
+            // Refresh token
+            cache.set('trakt:token', token);
             return trakt.sync.collection.add(data);
           })
           .then(function (res) {
