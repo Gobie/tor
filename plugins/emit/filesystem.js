@@ -4,8 +4,8 @@ var path = require('path');
 var async = require('async');
 var _ = require('lodash');
 var parse = require('../../lib/torrent-parser');
-var glob = require('../input/glob');
-var customCommand = require('../input/customCommand');
+var glob = require('./filesystem/glob');
+var customCommand = require('./filesystem/customCommand');
 
 module.exports = function (program, config, done) {
   async.waterfall([

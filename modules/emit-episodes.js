@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var async = require('async');
 var filesystem = require('../plugins/emit/filesystem');
+var traktFactory = require('../plugins/emit/trakt');
 
 module.exports = function (program, config, options, done) {
   async.parallel([
@@ -18,6 +19,10 @@ module.exports = function (program, config, options, done) {
           episode: 0
         };
       }));
+    },
+    function (next) {
+      var trakt = traktFactory(program, config.services.trakt, program.config);
+      trakt.getWatchlist(next);
     }
   ], function (e, episodes) {
     if (e) {

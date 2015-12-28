@@ -3,7 +3,7 @@
 var async = require('async');
 
 module.exports = function (program, episodes, options, config, done) {
-  var trakt = require('../plugins/output/trakt')(program, config.output.trakt);
+  var trakt = require('../plugins/output/trakt')(program, config.services.trakt, program.config);
   var pushbullet = require('../plugins/output/pushbullet')(program, config.output.pushbullet);
   var synology = require('../plugins/output/synology')(program, config.output.synology);
   var customCommand = require('../plugins/output/customCommand')(program, config.output.customCommand);
@@ -21,7 +21,7 @@ module.exports = function (program, episodes, options, config, done) {
           return next();
         }
 
-        trakt.addToCollection(episode, program.config, next);
+        trakt.addToCollection(episode, next);
       },
       function (next) {
         if (options.dryRun) {
