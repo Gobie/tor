@@ -28,6 +28,10 @@ module.exports = function (program, config, options, done) {
       return done(e);
     }
 
-    return done(null, _.flatten(episodes));
+    return done(null, _.flattenDeep(episodes).map(function (episode) {
+      // path is used as cache key, keys are namespaced by :
+      episode.path = episode.path.replace(/:/, '');
+      return episode;
+    }));
   });
 };

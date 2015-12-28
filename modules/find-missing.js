@@ -9,7 +9,7 @@ var formatters = require('../lib/formatters');
 module.exports = function (program, episodes, options, done) {
   async.waterfall([
     function (next) {
-      next(null, _.groupBy(_.flatten(episodes), 'path'));
+      next(null, _.groupBy(episodes, 'path'));
     },
     function (showsGroupedByName, next) {
       program.log.debug('processing shows', Object.keys(showsGroupedByName));
