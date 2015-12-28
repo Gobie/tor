@@ -21,7 +21,10 @@ module.exports = function (program, episodes, options, config, done) {
           return next();
         }
 
-        trakt.addToCollection(episode, next);
+        async.parallel([
+          trakt.addToCollection.bind(trakt, episode),
+          trakt.removeFromWatchlist.bind(trakt, episode)
+        ], next);
       },
       function (next) {
         if (options.dryRun) {
