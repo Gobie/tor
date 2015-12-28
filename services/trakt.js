@@ -68,7 +68,11 @@ module.exports = function (program, pluginConfig, cache) {
           return done(e);
         }
 
-        action(trakt, done);
+        try {
+          action(trakt, done);
+        } catch (e) {
+          done(e.stack);
+        }
       });
     }
   };

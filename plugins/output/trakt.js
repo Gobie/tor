@@ -16,33 +16,25 @@ module.exports = function (program, pluginConfig, cache) {
           }]
         };
 
-        try {
-          trakt.sync.collection.add(data)
-          .then(function (res) {
-            if (res.added.episodes !== 1 && res.existing.episodes !== 1) {
-              program.log.error('trakt: saving episode had unexpected output', data, res);
-            }
-            next();
-          }, next);
-        } catch (e) {
-          next(e.stack);
-        }
+        trakt.sync.collection.add(data)
+        .then(function (res) {
+          if (res.added.episodes !== 1 && res.existing.episodes !== 1) {
+            program.log.error('trakt: saving episode had unexpected output', data, res);
+          }
+          next();
+        }, next);
       }, done);
     },
     removeFromWatchlist: function (episode, done) {
       traktService.authAction(function (trakt, next) {
-        try {
-          trakt.sync.watchlist.remove({
-            shows: [{
-              ids: {tvdb: cache.get('series:' + episode.episode.name + ':info:ids:thetvdb')}
-            }]
-          })
-          .then(function () {
-            next();
-          }, next);
-        } catch (e) {
-          next(e.stack);
-        }
+        trakt.sync.watchlist.remove({
+          shows: [{
+            ids: {tvdb: cache.get('series:' + episode.episode.name + ':info:ids:thetvdb')}
+          }]
+        })
+        .then(function () {
+          next();
+        }, next);
       }, done);
     }
   };
