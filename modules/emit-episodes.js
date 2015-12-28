@@ -17,7 +17,8 @@ module.exports = function (program, config, options, done) {
           name: series,
           path: series,
           season: 0,
-          episode: 0
+          episode: 0,
+          source: 'options'
         };
       }));
     },

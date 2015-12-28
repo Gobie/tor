@@ -11,7 +11,8 @@ module.exports = function (program, pluginConfig, cache) {
             name: entity.show.title,
             path: entity.show.title,
             season: 0,
-            episode: 0
+            episode: 0,
+            source: 'trakt'
           };
         });
       };
@@ -32,7 +33,8 @@ module.exports = function (program, pluginConfig, cache) {
                 name: entity.show.title,
                 path: entity.show.title,
                 season: season.number,
-                episode: episode.number
+                episode: episode.number,
+                source: 'trakt'
               };
             });
           });
