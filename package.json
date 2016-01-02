@@ -46,6 +46,7 @@
   "devDependencies": {
     "mocha": "^2.3.4",
     "nsp": "^2.2.0",
+    "pre-git": "^3.1.2",
     "xo": "^0.12.1"
   },
   "xo": {
@@ -57,5 +58,24 @@
     "ignores": [
       "config.js"
     ]
+  },
+  "config": {
+    "pre-git": {
+      "commit-msg": [
+        "conventional"
+      ],
+      "pre-commit": [
+        "npm test"
+      ],
+      "pre-push": [
+        "rm -rf ./node_modules",
+        "npm i",
+        "npm test"
+      ],
+      "post-commit": [],
+      "post-merge": [
+        "npm install"
+      ]
+    }
   }
 }
