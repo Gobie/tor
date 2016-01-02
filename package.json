@@ -7,9 +7,12 @@
     "tor": "./bin/tor"
   },
   "scripts": {
+    "check-coverage": "istanbul check-coverage --functions 100 --statements 100 --branches 100 --lines 100",
+    "coverage": "istanbul cover _mocha -- -R spec --bail --check-leaks test/**/*.spec.js",
+    "lint": "xo",
+    "secure": "nsp check",
     "start": "./bin/tor missing",
-    "test": "xo && mocha --reporter spec --bail --check-leaks",
-    "secure": "nsp check"
+    "test": "npm run lint && npm run coverage && npm run check-coverage"
   },
   "author": {
     "name": "Michal Brašna",
@@ -44,6 +47,7 @@
     "xml2js": "^0.4.15"
   },
   "devDependencies": {
+    "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
     "nsp": "^2.2.0",
     "pre-git": "^3.1.2",
