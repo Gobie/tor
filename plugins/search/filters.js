@@ -4,11 +4,13 @@ var _ = require('lodash');
 var filterTypes = require('./filter-types');
 
 /**
- * Filters are an array of object {type, args}
+ * @param {Array<{type, args}>} filters values from config
  */
 module.exports = function (program, filters) {
   var filterTypesFactory = filterTypes(program);
   var data = [];
+
+  // create deferred filter chain
   var filter = filters.reduce(function (acc, opts) {
     var filterFactory = filterTypesFactory[opts.type];
     if (!filterFactory) {
