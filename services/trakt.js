@@ -71,7 +71,7 @@ module.exports = function (program, pluginConfig, cache) {
         try {
           action(trakt, done);
         } catch (e) {
-          done(e.stack);
+          done(e.stack || e);
         }
       });
     }
