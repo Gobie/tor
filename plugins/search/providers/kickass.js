@@ -25,7 +25,7 @@ module.exports = function (program, query, done) {
   program.log.debug('kat: searching for %s', query);
 
   search({
-    url: 'https://kat.cr/usearch/' + encodeURIComponent(query) + '%20category%3Atv%20seeds%3A5%20is_safe%3A1/?rss=1&field=seeders&sorder=desc'
+    url: 'https://kat.cr/usearch/' + encodeURIComponent(query) + '%20category%3Atv%20is_safe%3A1/?rss=1&field=seeders&sorder=desc'
   }, function (e, results) {
     if (e) {
       program.log.error('kat', e);
