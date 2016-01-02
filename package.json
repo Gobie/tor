@@ -70,6 +70,7 @@
       "pre-push": [
         "rm -rf ./node_modules",
         "npm i",
+        "npm outdated",
         "npm test"
       ],
       "post-commit": [],
