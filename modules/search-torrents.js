@@ -13,13 +13,18 @@ module.exports = function (program, episodes, config, done) {
     program.log.debug('searching for %s', query);
     search(program, query, function (e, torrents) {
       if (e || !torrents.length) {
-        program.log.info('episode %s wasn\'t found', query);
+        program.log.info('episode %s wasn\'t found on torrent sites', query);
         return next();
       }
       program.log.debug('%s torrents found for %s', torrents.length, query);
 
       var acceptedTorrents = filter(torrents);
       program.log.debug('%s out of %s torrents remained for %s', acceptedTorrents.length, torrents.length, query);
+
+      if (!acceptedTorrents.length) {
+        program.log.info('episode %s wasn\'t found because of filters', query);
+        return next();
+      }
       program.log.info('episode %s was found', query);
 
       return next(null, {episode: episode, torrent: acceptedTorrents[0]});
