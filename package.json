@@ -12,7 +12,9 @@
     "lint": "xo",
     "secure": "nsp check",
     "start": "./bin/tor missing",
-    "test": "npm run lint && npm run coverage && npm run check-coverage"
+    "test": "npm run lint && npm run coverage && npm run check-coverage",
+    "Xtest:unit": "echo TODO && exit 1",
+    "Xtest:integration": "echo TODO && exit 1"
   },
   "author": {
     "name": "Michal Brašna",

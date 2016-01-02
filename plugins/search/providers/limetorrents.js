@@ -23,6 +23,7 @@ var search = function (options, callback) {
   req.on('error', callback);
 };
 
+// TODO make this work when no torrent matches the query
 module.exports = function (program, query, done) {
   program.log.debug('limetorrents: searching for %s', query);
 

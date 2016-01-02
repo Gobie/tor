@@ -1,5 +1,6 @@
 'use strict';
 
+// TODO this is integration test, split these from unit tests
 var assert = require('assert');
 var exec = require('child_process').exec;
 var path = require('path');
