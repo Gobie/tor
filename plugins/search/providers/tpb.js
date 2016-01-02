@@ -2,7 +2,7 @@
 
 var bytes = require('bytes');
 var tpb = require('thepiratebay');
-tpb.setUrl('http://thepiratebay.la');
+tpb.setUrl('http://thepiratebay.se');
 
 module.exports = function (program, query, done) {
   program.log.debug('tpb: searching for %s', query);
