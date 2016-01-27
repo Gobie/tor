@@ -7,7 +7,9 @@ var parser = new xml2js.Parser();
 
 var search = function (options, callback) {
   var chunks = [];
-  var res = request(options).pipe(zlib.createGunzip());
+  var req = request(options);
+  req.on('error', callback);
+  var res = req.pipe(zlib.createGunzip());
   res.on('error', callback);
   res.on('data', function (chunk) {
     chunks.push(chunk);
@@ -32,6 +34,7 @@ module.exports = function (program, query, done) {
       return done(null, []);
     }
     if (!results) {
+      program.log.debug('kat: found 0 torrents for %s', query);
       return done(null, []);
     }
 

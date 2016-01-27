@@ -22,8 +22,22 @@ module.exports = function (program, config, options, done) {
         };
       }));
     },
-    trakt.getWatchlist.bind(trakt),
-    trakt.getCollection.bind(trakt)
+    function (next) {
+      trakt.getWatchlist(function (e, episodes) {
+        if (e) {
+          program.log.error(e);
+        }
+        return next(null, episodes || []);
+      });
+    },
+    function (next) {
+      trakt.getCollection(function (e, episodes) {
+        if (e) {
+          program.log.error(e);
+        }
+        return next(null, episodes || []);
+      });
+    }
   ], function (e, episodes) {
     if (e) {
       return done(e);
