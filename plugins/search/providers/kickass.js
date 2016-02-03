@@ -1,11 +1,13 @@
 'use strict';
 
+var _ = require('lodash');
 var zlib = require('zlib');
 var request = require('request');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 
 var search = function (options, callback) {
+  _.defaults(options, {timeout: 10000});
   var chunks = [];
   var req = request(options);
   req.on('error', callback);
