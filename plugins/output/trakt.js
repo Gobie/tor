@@ -16,6 +16,7 @@ module.exports = function (program, pluginConfig, cache) {
           }]
         };
 
+        program.log.debug('trakt: added to collection', episode);
         trakt.sync.collection.add(data)
         .then(function (res) {
           if (res.added.episodes !== 1 && res.existing.episodes !== 1) {
@@ -27,6 +28,7 @@ module.exports = function (program, pluginConfig, cache) {
     },
     removeFromWatchlist: function (episode, done) {
       traktService.authAction(function (trakt, next) {
+        program.log.debug('trakt: removed from watchlist', episode);
         trakt.sync.watchlist.remove({
           shows: [{
             ids: {tvdb: cache.get('series:' + episode.episode.name + ':info:ids:thetvdb')}
