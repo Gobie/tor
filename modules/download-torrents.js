@@ -15,7 +15,21 @@ module.exports = function (program, episodes, options, config, done) {
       episode.torrent.source
     );
 
-    async.parallel([
+    async.series([
+      function (next) {
+        if (options.dryRun) {
+          return next();
+        }
+
+        customCommand.exec(episode, next);
+      },
+      function (next) {
+        if (options.dryRun) {
+          return next();
+        }
+
+        synology.download(episode, next);
+      },
       function (next) {
         if (options.dryRun) {
           return next();
@@ -32,20 +46,6 @@ module.exports = function (program, episodes, options, config, done) {
         }
 
         pushbullet.push(episode, next);
-      },
-      function (next) {
-        if (options.dryRun) {
-          return next();
-        }
-
-        customCommand.exec(episode, next);
-      },
-      function (next) {
-        if (options.dryRun) {
-          return next();
-        }
-
-        synology.download(episode, next);
       }
     ], next);
   }, done);
