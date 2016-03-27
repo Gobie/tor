@@ -26,6 +26,7 @@ var search = function (options, callback) {
 };
 
 module.exports = function (program, query, done) {
+  query = query.replace(/[':]/, '');
   program.log.debug('kat: searching for %s', query);
 
   search({
