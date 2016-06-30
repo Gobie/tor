@@ -8,7 +8,7 @@ var filtersFactory = require('../plugins/search/filters');
 module.exports = function (program, episodes, config, done) {
   var filter = filtersFactory(program, config.search.filters);
 
-  async.map(episodes, function (episode, next) {
+  async.mapLimit(episodes, 5, function (episode, next) {
     var query = episode.name + ' ' + formatters.episode(episode.season, episode.episode);
     program.log.debug('searching for %s', query);
     search(program, query, function (e, torrents) {
