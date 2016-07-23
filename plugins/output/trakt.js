@@ -23,7 +23,12 @@ module.exports = function (program, pluginConfig, cache) {
             program.log.error('trakt: saving episode had unexpected output', data, res);
           }
           next();
-        }, next);
+        }, function (e, r) {
+          if (e) {
+            program.log.error('trakt: saving episode had error output', e, data, r);
+          }
+          next(e, r);
+        });
       }, done);
     },
     removeFromWatchlist: function (episode, done) {
