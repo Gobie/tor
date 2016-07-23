@@ -2,13 +2,15 @@
 
 var async = require('async');
 var _ = require('lodash');
-var kickass = require('./providers/kickass');
+// var kickass = require('./providers/kickass');
 var tpb = require('./providers/tpb');
 
 module.exports = function (program, query, next) {
   async.parallel({
     kickass: function (next) {
-      kickass(program, query, next);
+      // KAT was closed
+      return next(null, []);
+      // kickass(program, query, next);
     },
     tpb: function (next) {
       tpb(program, query, next);
