@@ -21,7 +21,7 @@ module.exports = function (program, config, done) {
     function (filePaths, next) {
       // TODO extract to input filters
       var allowedExt = ['.avi', '.mp4', '.mpg', '.mkv'];
-      var regex = /(Extras|Sample|E00)/;
+      var regex = /(Extras|Specials|Sample|E00)/;
 
       program.log.debug('%s files found', filePaths.length);
       var filtered = _.filter(filePaths, function (filePath) {
