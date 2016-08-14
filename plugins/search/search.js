@@ -2,16 +2,10 @@
 
 var async = require('async');
 var _ = require('lodash');
-// var kickass = require('./providers/kickass');
 var tpb = require('./providers/tpb');
 
 module.exports = function (program, query, next) {
   async.parallel({
-    kickass: function (next) {
-      // KAT was closed
-      return next(null, []);
-      // kickass(program, query, next);
-    },
     tpb: function (next) {
       tpb(program, query, next);
     }
@@ -24,7 +18,7 @@ module.exports = function (program, query, next) {
     }
 
     var torrents = _([])
-      .concat(res.tpb, res.kickass)
+      .concat(res.tpb)
       .sortByOrder(['seeders'], ['desc']);
     next(null, torrents.value());
   });
