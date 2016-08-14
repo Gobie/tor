@@ -5,7 +5,6 @@ var tpb = require('thepiratebay');
 tpb.setUrl('http://thepiratebay.se');
 
 module.exports = function (program, query, done) {
-  query = query.replace(/[':]/, '');
   program.log.debug('tpb: searching for %s', query);
 
   tpb.search(query, {
