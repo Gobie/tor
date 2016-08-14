@@ -4,10 +4,10 @@ module.exports = function (program, query, done) {
   var rarbgService = require('../../../services/rarbg')(program);
 
   program.log.debug('rarbg: searching for %s', query);
+
   rarbgService.search({
     search_string: query, // eslint-disable-line camelcase
     sort: 'seeders',
-    min_seeders: '5', // eslint-disable-line camelcase
     category: 'tv'
   }, function (e, results) {
     if (e) {
