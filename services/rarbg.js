@@ -122,7 +122,7 @@ module.exports = function (program) {
           }
 
           return next();
-        }, 2000); // rarbg's rate limit 1req/2sec
+        }, 3000); // rarbg's rate limit 1req/2sec
       });
     }, 1);
   }
