@@ -1,9 +1,11 @@
 'use strict';
 
-// Using cloudflares DDoS protection
-
 var bytes = require('bytes');
 var tpb = require('thepiratebay');
+
+// get URL from https://proxybay.one/
+// if there are problems use cloudflare.request
+tpb.setUrl('https://pirateproxy.vip/');
 
 module.exports = function (program, query, done) {
   program.log.debug('tpb: searching for %s', query);
