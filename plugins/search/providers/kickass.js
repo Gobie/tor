@@ -1,6 +1,6 @@
 'use strict';
 
-// It is dead
+// Disabled: It is dead
 
 var _ = require('lodash');
 var zlib = require('zlib');

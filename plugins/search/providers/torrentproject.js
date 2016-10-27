@@ -1,5 +1,7 @@
 'use strict';
 
+// Disabled: lot of falsely active torrents
+
 var _ = require('lodash');
 var cloudscraper = require('cloudscraper');
 var xml2js = require('xml2js');
