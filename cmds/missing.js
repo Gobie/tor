@@ -2,6 +2,7 @@
 
 var path = require('path');
 var async = require('async');
+var moment = require('moment');
 var emitEpisodes = require('../modules/emit-episodes');
 var findMissingEpisodes = require('../modules/find-missing');
 var searchTorrents = require('../modules/search-torrents');
@@ -42,7 +43,15 @@ module.exports = function (program) {
           downloadTorrents(program, episodes, options, config, next);
         }
       ], function (e, episodes) {
-        // TODO remove series, which were not accessed in 30 days
+        // cleanup: remove series, which were not accessed in last 6 months
+        var shows = program.config.get('series');
+        for (var showName in shows) {
+          if (moment().subtract(6, 'month').isAfter(shows[showName].accessed)) {
+            delete shows[showName];
+          }
+        }
+        program.config.set('series', shows);
+
         program.config.save();
         if (e) {
           return program.log.error(e);
