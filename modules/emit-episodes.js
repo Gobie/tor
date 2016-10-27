@@ -23,6 +23,9 @@ module.exports = function (program, config, options, done) {
       }));
     },
     function (next) {
+      if (!options.trakt) {
+        return next(null, []);
+      }
       trakt.getWatchlist(function (e, episodes) {
         if (e) {
           program.log.error('trakt: failed to get watchlist', e);
@@ -31,6 +34,9 @@ module.exports = function (program, config, options, done) {
       });
     },
     function (next) {
+      if (!options.trakt) {
+        return next(null, []);
+      }
       trakt.getCollection(function (e, episodes) {
         if (e) {
           program.log.error('trakt: failed to get collection', e);
