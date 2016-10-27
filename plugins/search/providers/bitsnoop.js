@@ -46,7 +46,7 @@ module.exports = function (program, query, done) {
       return {
         title: torrent.title[0],
         size: Number(torrent.size[0]),
-        torrentLink: torrent.enclosure[0].$.url,
+        torrentLink: torrent.torrent[0].magnetURI[0],
         seeders: Number(torrent.numSeeders[0]),
         leechers: Number(torrent.numLeechers[0]),
         source: 'bitsnoop'

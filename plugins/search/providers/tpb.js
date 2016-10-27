@@ -1,8 +1,9 @@
 'use strict';
 
+// Using cloudflares DDoS protection
+
 var bytes = require('bytes');
 var tpb = require('thepiratebay');
-tpb.setUrl('http://thepiratebay.se');
 
 module.exports = function (program, query, done) {
   program.log.debug('tpb: searching for %s', query);

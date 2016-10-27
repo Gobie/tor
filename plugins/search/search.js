@@ -2,7 +2,6 @@
 
 var async = require('async');
 var _ = require('lodash');
-var tpb = require('./providers/tpb');
 var rarbg = require('./providers/rarbg');
 var bitsnoop = require('./providers/bitsnoop');
 
@@ -10,9 +9,6 @@ module.exports = function (program, query, next) {
   query = query.replace(/[':]/, '');
 
   async.parallel({
-    tpb: function (next) {
-      tpb(program, query, next);
-    },
     rarbg: function (next) {
       rarbg(program, query, next);
     },
@@ -28,7 +24,7 @@ module.exports = function (program, query, next) {
     }
 
     var torrents = _([])
-      .concat(res.tpb, res.rarbg, res.bitsnoop)
+      .concat(res.rarbg, res.bitsnoop)
       .sortByOrder(['seeders'], ['desc']);
     next(null, torrents.value());
   });
