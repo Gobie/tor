@@ -6,6 +6,8 @@ var url = require('url');
 var moment = require('moment');
 var async = require('async');
 
+var RARBG_DELAY = 3000; // rarbg's rate limit 1req/2sec
+
 var query = function (options, next) {
   _.defaults(options, {timeout: 10000});
   request(options, function (e, res, body) {
@@ -50,7 +52,7 @@ var getToken = function (appName, next) {
 
 var ensureToken = function (program, next) {
   var token = program.config.get('rarbg:token');
-  if (!token || moment(token.expires).isBefore(moment())) {
+  if (!token || moment().isAfter(token.expires)) {
     return getToken(program._name, function (e, token) {
       if (e) {
         return next(e);
@@ -60,7 +62,10 @@ var ensureToken = function (program, next) {
         access_token: token, // eslint-disable-line camelcase
         expires: Number(moment().add('15 minutes'))
       });
-      return next(null, token);
+
+      setTimeout(function() {
+        return next(null, token);
+      }, RARBG_DELAY);
     });
   }
 
@@ -122,7 +127,7 @@ module.exports = function (program) {
           }
 
           return next();
-        }, 3000); // rarbg's rate limit 1req/2sec
+        }, RARBG_DELAY);
       });
     }, 1);
   }
