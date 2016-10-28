@@ -46,11 +46,7 @@ module.exports = function (program, episodes, options, done) {
             return next(e);
           }
 
-          if (missing.length === 0) {
-            program.log.debug('%s (no missing)', showName);
-          } else {
-            program.log.info('%s (%s missing)', showName, missing.length);
-          }
+          program.log.debug('%s (%s missing)', showName, missing.length || 'no');
           next(null, missing);
         });
       }, function (e, missing) {
