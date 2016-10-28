@@ -3,28 +3,26 @@
 var Trakt = require('trakt.tv');
 var async = require('async');
 var open = require('open');
+var inquirer = require('inquirer');
 
-var enterPin = function (done) {
-  var schema = {
-    properties: {
-      pin: {
-        pattern: /^[0-9A-Z]+$/,
-        message: 'PIN must be only numbers or letters',
-        description: 'Enter PIN from trakt.tv',
-        required: true
+var enterPin = function(done) {
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'pin',
+      message: 'Enter PIN from trakt.tv',
+      validate: function (value) {
+        var pass = value.match(/^[0-9A-Z]+$/);
+        if (pass) {
+          return true;
+        }
+
+        return 'Please enter a valid PIN';
       }
     }
-  };
-
-  var prompt = require('prompt');
-  prompt.start();
-  prompt.get(schema, function (e, result) {
-    if (e) {
-      return done(e);
-    }
-
-    done(null, result.pin);
-  });
+  ]).then(function (answers) {
+    done(null, answers.pin)
+  }, done);
 };
 
 module.exports = function (program, pluginConfig, cache) {
@@ -46,7 +44,8 @@ module.exports = function (program, pluginConfig, cache) {
               return next(e);
             }
 
-            trakt.exchange_code(pin)
+            trakt
+            .exchange_code(pin)
             .then(function () {
               cache.set('trakt:token', trakt.export_token());
               next();
