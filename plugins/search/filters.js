@@ -11,14 +11,14 @@ module.exports = function (program, filters) {
   var data = [];
 
   // create deferred filter chain
-  var filter = filters.reduce(function (acc, opts) {
+  var filterChain = filters.reduce(function (acc, opts) {
     var filterFactory = filterTypesFactory[opts.type];
     if (!filterFactory) {
       program.log.error('unknown filter type', opts.type);
       return acc;
     }
     // create filter with args from config
-    filter = filterFactory.apply(null, opts.args);
+    var filter = filterFactory.apply(null, opts.args);
     // add filter to deferred chain
     return acc.filter(filter);
   }, _(data));
@@ -28,6 +28,6 @@ module.exports = function (program, filters) {
     data.length = 0;
     data.push.apply(data, torrents);
     // evaluate chain
-    return filter.value();
+    return filterChain.value();
   };
 };

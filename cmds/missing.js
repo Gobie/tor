@@ -5,7 +5,7 @@ var async = require('async');
 var moment = require('moment');
 var emitEpisodes = require('../modules/emit-episodes');
 var findMissingEpisodes = require('../modules/find-missing');
-var searchTorrents = require('../modules/search-torrents');
+var searchTorrentsModuleFactory = require('../modules/search-torrents');
 var downloadTorrents = require('../modules/download-torrents');
 
 module.exports = function (program) {
@@ -25,6 +25,7 @@ module.exports = function (program) {
     .description('download all missing episodes')
     .action(function (options) {
       var config = require(path.resolve(__dirname, '../', options.configFile));
+      var searchTorrentsModule = searchTorrentsModuleFactory(program, config);
 
       async.waterfall([
         function (next) {
@@ -36,7 +37,7 @@ module.exports = function (program) {
         },
         function (episodes, next) {
           program.log.info('[stats] missing %s episodes', episodes.length);
-          searchTorrents(program, episodes, config, next);
+          searchTorrentsModule(episodes, next);
         },
         function (episodes, next) {
           program.log.info('[stats] found %s episodes on torrent sites', episodes.length);

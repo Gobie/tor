@@ -7,8 +7,6 @@ var bitsnoop = require('./providers/bitsnoop');
 var tpb = require('./providers/tpb');
 
 module.exports = function (program, query, next) {
-  query = query.replace(/[':]/, '');
-
   var providers = [rarbg, bitsnoop, tpb];
   async.parallel(_.map(providers, function (provider) {
     return function (next) {
