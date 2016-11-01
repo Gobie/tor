@@ -31,7 +31,7 @@ module.exports = function (program, episodes, options, config, done) {
         synology.download(episode, next);
       },
       function (next) {
-        if (options.dryRun) {
+        if (options.dryRun || !options.trakt) {
           return next();
         }
 
