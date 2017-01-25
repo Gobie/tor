@@ -49,25 +49,25 @@ module.exports = function (program, config) {
       program.log.info('episode %s was found', logQuery);
       return next(null, {episode: episode, torrent: acceptedTorrents[0]});
     });
-  }
+  };
 
   var queue = async.queue(searchForEpisode, config.search.concurrency || 5);
 
   return function (episodes, next) {
     var results = [];
 
-    queue.drain = function() {
-      queue.kill()
+    queue.drain = function () {
+      queue.kill();
       next(null, results);
     };
 
     var tasks = _.map(episodes, function (episode) {
-      return {episode: episode}
+      return {episode: episode};
     });
 
-    queue.push(tasks, function(e, r) {
+    queue.push(tasks, function (e, r) {
       if (e) {
-        program.log.error('search queue', e)
+        program.log.error('search queue', e);
       } else if (r) {
         results.push(r);
       }

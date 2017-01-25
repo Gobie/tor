@@ -63,7 +63,7 @@ var ensureToken = function (program, next) {
         expires: Number(moment().add('15 minutes'))
       });
 
-      setTimeout(function() {
+      setTimeout(function () {
         return next(null, token);
       }, RARBG_DELAY);
     });

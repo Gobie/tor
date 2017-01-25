@@ -5,7 +5,7 @@ var async = require('async');
 var open = require('open');
 var inquirer = require('inquirer');
 
-var enterPin = function(done) {
+var enterPin = function (done) {
   inquirer.prompt([
     {
       type: 'input',
@@ -21,7 +21,7 @@ var enterPin = function(done) {
       }
     }
   ]).then(function (answers) {
-    done(null, answers.pin)
+    done(null, answers.pin);
   }, done);
 };
 
