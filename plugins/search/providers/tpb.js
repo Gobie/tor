@@ -11,7 +11,7 @@ module.exports = function (program, query, done) {
   program.log.debug('tpb: searching for %s', query);
 
   tpb.search(query, {
-    category: 205,
+    category: '205,208',
     orderBy: 7
   }).then(function (results) {
     var torrents = results || [];
