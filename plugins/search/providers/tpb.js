@@ -5,7 +5,7 @@ var tpb = require('thepiratebay');
 
 // get URL from https://proxybay.one/
 // if there are problems use cloudflare.request
-tpb.setUrl('https://pirateproxy.vip/');
+tpb.setUrl('https://thepiratebay.org/');
 
 module.exports = function (program, query, done) {
   program.log.debug('tpb: searching for %s', query);
