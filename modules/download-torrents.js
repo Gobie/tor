@@ -4,7 +4,6 @@ var async = require('async');
 
 module.exports = function (program, episodes, options, config, done) {
   var trakt = require('../plugins/output/trakt')(program, config.services.trakt, program.config);
-  var pushbullet = require('../plugins/output/pushbullet')(program, config.output.pushbullet);
   var synology = require('../plugins/output/synology')(program, config.output.synology);
   var customCommand = require('../plugins/output/customCommand')(program, config.output.customCommand);
 
@@ -40,13 +39,6 @@ module.exports = function (program, episodes, options, config, done) {
           trakt.removeFromWatchlist.bind(trakt, episode)
         ], next);
       },
-      function (next) {
-        if (options.dryRun) {
-          return next();
-        }
-
-        pushbullet.push(episode, next);
-      }
     ], next);
   }, done);
 };

@@ -42,7 +42,6 @@
     "open": "^0.0.5",
     "pad": "^1.0.2",
     "parse-torrent-name": "^0.5.4",
-    "pushbullet": "^1.4.3",
     "request": "^2.65.0",
     "syno": "^1.0.5",
     "thepiratebay": "^0.2.6",
