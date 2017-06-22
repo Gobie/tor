@@ -3,11 +3,10 @@
 var async = require('async');
 var _ = require('lodash');
 var rarbg = require('./providers/rarbg');
-var bitsnoop = require('./providers/bitsnoop');
 var tpb = require('./providers/tpb');
 
 module.exports = function (program, query, next) {
-  var providers = [rarbg, bitsnoop, tpb];
+  var providers = [rarbg, tpb];
   async.parallel(_.map(providers, function (provider) {
     return function (next) {
       provider(program, query, next);
