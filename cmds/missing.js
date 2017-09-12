@@ -55,6 +55,7 @@ module.exports = function (program) {
 
         program.config.save();
         if (e) {
+          console.log(e);
           return program.log.error(e);
         }
 

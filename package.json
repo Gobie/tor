@@ -45,7 +45,7 @@
     "request": "^2.65.0",
     "syno": "^1.0.5",
     "thepiratebay": "^0.2.6",
-    "trakt.tv": "^1.0.3",
+    "trakt.tv": "^5.0.1",
     "xml2js": "^0.4.15"
   },
   "devDependencies": {
