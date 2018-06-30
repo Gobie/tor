@@ -9,7 +9,12 @@ var async = require('async');
 var RARBG_DELAY = 3000; // rarbg's rate limit 1req/2sec
 
 var query = function (options, next) {
-  _.defaults(options, {timeout: 10000});
+  _.defaults(options, {
+    timeout: 10000,
+    headers: {
+      'user-agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+    }
+  });
   request(options, function (e, res, body) {
     if (e) {
       return next(e);
@@ -82,7 +87,8 @@ var searchFactory = function (program) {
       _.defaults(options, {
         mode: 'search',
         format: 'json_extended',
-        token: token
+        token: token,
+        app_id: program._name // eslint-disable-line camelcase
       });
 
       var uri = url.format({

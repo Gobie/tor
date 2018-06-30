@@ -38,7 +38,7 @@ module.exports = function (program, episodes, options, config, done) {
           trakt.addToCollection.bind(trakt, episode),
           trakt.removeFromWatchlist.bind(trakt, episode)
         ], next);
-      },
+      }
     ], next);
   }, done);
 };
