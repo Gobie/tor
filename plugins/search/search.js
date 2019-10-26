@@ -3,10 +3,10 @@
 var async = require('async');
 var _ = require('lodash');
 var rarbg = require('./providers/rarbg');
-var tpb = require('./providers/tpb');
+var limetorrents = require('./providers/limetorrents');
 
 module.exports = function (program, query, next) {
-  var providers = [rarbg, tpb];
+  var providers = [rarbg, limetorrents];
   async.parallel(_.map(providers, function (provider) {
     return function (next) {
       provider(program, query, next);

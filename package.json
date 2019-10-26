@@ -10,11 +10,8 @@
     "check-coverage": "istanbul check-coverage --functions 100 --statements 100 --branches 100 --lines 100",
     "coverage": "istanbul cover _mocha -- -R spec --bail --check-leaks test/**/*.spec.js",
     "lint": "xo",
-    "secure": "nsp check",
     "start": "./bin/tor missing",
-    "test": "npm run lint && npm run coverage && npm run check-coverage",
-    "Xtest:unit": "echo TODO && exit 1",
-    "Xtest:integration": "echo TODO && exit 1"
+    "test": "npm run lint && npm run coverage && npm run check-coverage"
   },
   "author": {
     "name": "Michal Brašna",
@@ -40,19 +37,18 @@
     "lodash": "^3.10.0",
     "moment": "^2.15.2",
     "open": "^0.0.5",
-    "pad": "^1.0.2",
+    "pad": "1.0.2",
     "parse-torrent-name": "^0.5.4",
-    "request": "^2.65.0",
+    "request": "2.87.0",
+    "requestretry": "^2.0.2",
     "syno": "^1.0.5",
-    "thepiratebay": "^0.2.6",
-    "trakt.tv": "^5.0.1",
-    "xml2js": "^0.4.15"
+    "thepiratebay": "^1.4.7",
+    "trakt.tv": "^1.0.3",
+    "xml2js": "0.4.16"
   },
   "devDependencies": {
     "istanbul": "^0.4.1",
     "mocha": "^2.3.4",
-    "nsp": "^2.2.0",
-    "pre-git": "^3.1.2",
     "xo": "^0.12.1"
   },
   "xo": {
@@ -64,18 +60,5 @@
     "ignores": [
       "config.js"
     ]
-  },
-  "config": {
-    "pre-git": {
-      "commit-msg": [
-        "conventional"
-      ],
-      "pre-push": [
-        "npm test"
-      ],
-      "post-merge": [
-        "npm i"
-      ]
-    }
   }
 }

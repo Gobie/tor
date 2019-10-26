@@ -1,38 +1,25 @@
 'use strict';
 
-// Disabled: it returns unrelated torrents when it can't find anything
-
 var _ = require('lodash');
-var request = require('request');
+var request = require('requestretry');
 var xml2js = require('xml2js');
 var parser = new xml2js.Parser();
 
-var search = function (options, callback) {
+var search = function (options, done) {
   _.defaults(options, {timeout: 10000});
-  var req = request(options);
-  req.on('response', function (res) {
-    var chunks = [];
-    res.on('data', function (chunk) {
-      chunks.push(chunk);
-    });
-
-    res.on('end', function () {
-      try {
-        parser.parseString(Buffer.concat(chunks).toString(), callback);
-      } catch (e) {
-        callback(e);
-      }
-    });
+  request(options, function (e, res, body) {
+    if (e) {
+      return done(e);
+    }
+    parser.parseString(body, done);
   });
-  req.on('error', callback);
 };
 
-// TODO make this work when no torrent matches the query
 module.exports = function (program, query, done) {
   program.log.debug('limetorrents: searching for %s', query);
 
   search({
-    url: 'https://www.limetorrents.cc/searchrss/' + encodeURIComponent(query) + '/'
+    url: 'https://www.limetorrents.info/searchrss/' + encodeURIComponent(query) + '/'
   }, function (e, results) {
     if (e) {
       program.log.error('limetorrents', e);

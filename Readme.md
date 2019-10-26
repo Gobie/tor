@@ -10,7 +10,6 @@ Simple tool for automatically downloading series. It is simple Flexget alternati
 - search episodes on torrents (tpb, kat)
 - push torrents/magnet URIs to Synology's download station
 - update trakt.tv
-- push to pushbullet
 
 # Usage
 

@@ -1,18 +1,17 @@
 'use strict';
 
+// Disabled: Requires code update
+
 var bytes = require('bytes');
 var tpb = require('thepiratebay');
-
-// get URL from https://proxybay.one/
-// if there are problems use cloudflare.request
-tpb.setUrl('https://thepiratebay.org/');
 
 module.exports = function (program, query, done) {
   program.log.debug('tpb: searching for %s', query);
 
   tpb.search(query, {
     category: '205,208',
-    orderBy: 7
+    orderBy: 'seeds',
+    sortBy: 'desc'
   }).then(function (results) {
     var torrents = results || [];
     program.log.debug('tpb: found %s torrents for %s', torrents.length, query);
