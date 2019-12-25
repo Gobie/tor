@@ -6,7 +6,7 @@ var rarbg = require('./providers/rarbg');
 var limetorrents = require('./providers/limetorrents');
 
 module.exports = function (program, query, next) {
-  var providers = [rarbg, limetorrents];
+  var providers = [rarbg];//, limetorrents];
   async.parallel(_.map(providers, function (provider) {
     return function (next) {
       provider(program, query, next);

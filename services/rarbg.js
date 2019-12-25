@@ -126,13 +126,9 @@ module.exports = function (program) {
 
   if (!queue) {
     queue = async.queue(function (task, next) {
-      search(task.options, function (e) {
+      search(task.options, function (e, results) {
         setTimeout(function () {
-          if (e) {
-            return next(e);
-          }
-
-          return next();
+          return next(e, results);
         }, RARBG_DELAY);
       });
     }, 1);
