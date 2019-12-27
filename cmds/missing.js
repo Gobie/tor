@@ -21,10 +21,9 @@ module.exports = function (program) {
     .option('--no-cache', 'Disable episode cache')
     .option('--no-trakt', 'Disable trakt.tv as source')
     .option('--add-series <value>', 'Add series', addSeriesCollector, [])
-    .option('--config-file <value>', 'Path to app config', 'config.js')
     .description('download all missing episodes')
     .action(function (options) {
-      var config = require(path.resolve(__dirname, '../', options.configFile));
+      var config = require(path.join(process.env.WORKING_DIRECTORY, 'config.js'));
       var searchTorrentsModule = searchTorrentsModuleFactory(program, config);
 
       async.waterfall([
