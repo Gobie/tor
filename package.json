@@ -36,7 +36,7 @@
     "jsonfile": "^2.4.0",
     "lodash": "^3.10.0",
     "moment": "^2.15.2",
-    "open": "^0.0.5",
+    "open": "^6.0.0",
     "parse-torrent-name": "^0.5.4",
     "request": "^2.88.0",
     "requestretry": "^2.0.2",
