@@ -34,7 +34,7 @@
     "humanize": "^0.0.9",
     "inquirer": "^1.2.2",
     "jsonfile": "^2.4.0",
-    "lodash": "^3.10.0",
+    "lodash": "^4.17.13",
     "moment": "^2.15.2",
     "open": "^0.0.5",
     "parse-torrent-name": "^0.5.4",
