@@ -9,14 +9,13 @@
   "scripts": {
     "check-coverage": "istanbul check-coverage --functions 100 --statements 100 --branches 100 --lines 100",
     "coverage": "istanbul cover _mocha -- -R spec --bail --check-leaks test/**/*.spec.js",
-    "lint": "exit 0",
-    "start": "./bin/tor missing",
+    "lint": "prettier --write **/*.js bin/tor",
+    "start": "WORKING_DIRECTORY=$(pwd) ./bin/tor missing",
     "test": "npm run lint && npm run coverage && npm run check-coverage"
   },
   "author": {
     "name": "Michal Brašna",
-    "email": "michal.brasna@gmail.com",
-    "url": "https://github.com/Gobie"
+    "email": "michal.brasna@gmail.com"
   },
   "repository": {
     "type": "git",
@@ -47,16 +46,7 @@
   },
   "devDependencies": {
     "istanbul": "^0.4.1",
-    "mocha": "^2.3.4"
-  },
-  "xo": {
-    "space": true,
-    "envs": [
-      "node",
-      "mocha"
-    ],
-    "ignores": [
-      "config.js"
-    ]
+    "mocha": "^2.3.4",
+    "prettier": "^1.19.1"
   }
 }

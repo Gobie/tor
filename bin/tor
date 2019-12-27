@@ -1,23 +1,22 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
-var program  = require('commander');
-var path  = require('path');
+var program = require("commander");
+var path = require("path");
 
-require('autocmdr/lib/logger')(program);
-require('autocmdr/lib/loader')(program);
-require('autocmdr/lib/completion')(program);
-require('autocmdr/lib/package')(program);
-require('autocmdr/lib/config')(program, {
-  path: path.join(process.env.WORKING_DIRECTORY, '.tor')
+require("autocmdr/lib/logger")(program);
+require("autocmdr/lib/loader")(program);
+require("autocmdr/lib/completion")(program);
+require("autocmdr/lib/package")(program);
+require("autocmdr/lib/config")(program, {
+  path: path.join(process.env.WORKING_DIRECTORY, ".tor")
 });
-require('autocmdr/lib/help')(program);
+require("autocmdr/lib/help")(program);
 
-program
-  .parse(process.argv);
+program.parse(process.argv);
 
-if (program.args.length < 1 ) {
-  program.log.error('No command specified. See \'tor --help\':');
+if (program.args.length < 1) {
+  program.log.error("No command specified. See 'tor --help':");
   program.outputHelp();
   process.exit(1);
 }
