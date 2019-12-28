@@ -1,92 +1,103 @@
-"use strict";
+const {uniq, flatten, sortBy} = require('lodash')
+const { default: PQueue } = require('p-queue')
+const formatters = require('../lib/formatters')
+const filtersFactory = require('../lib/filters')
+const filterTypesFactory = require('../plugins/search/filter-types')
 
-var async = require("async");
-var _ = require("lodash");
-var formatters = require("../lib/formatters");
-var search = require("../plugins/search/search");
-var filtersFactory = require("../plugins/search/filters");
+/*
+  Input episode structure
+  {
+    name: 'Archer',
+    season: 3,
+    episode: 4,
+  }
+*/
+
+/*
+  Output episode structure
+  {
+    episode: {
+      name: 'Archer',
+      season: 3,
+      episode: 4,
+    },
+    torrent: {
+      ...
+    }
+  }
+*/
 
 module.exports = function(program, config) {
-  var filter = filtersFactory(program, config.search.filters || []);
+  const queue = new PQueue({ concurrency: config.search.concurrency || 5 })
 
-  var searchForEpisode = function(task, next) {
-    var episode = task.episode;
-    var query =
-      episode.name + " " + formatters.episode(episode.season, episode.episode);
-    query = query.replace(/[':]/, "");
+  const providers = [require('../plugins/search/providers/rarbg')(program)]
 
-    var queries = [query];
+  const search = async function(query) {
+    // No error should ever be thrown here, search providers return [] on error
+    const torrents = await Promise.all(
+      providers.map(provider => provider(query))
+    )
 
+    return sortBy(flatten(torrents), ['seeders']).reverse()
+  }
+
+  const applyFilters = filtersFactory(
+    program,
+    filterTypesFactory(program),
+    config.search.filters || []
+  )
+
+  const searchForEpisode = async function(episode) {
+    const query = `${episode.name.replace(/[':]/, '')} ${formatters.episode(
+      episode.season,
+      episode.episode
+    )}`
+
+    let queries = [query]
     // TODO extract to config
-    queries.push(query.replace(/Marvel'?s\s*/, ""));
-    queries = _.uniq(queries);
+    queries.push(query.replace(/Marvel'?s\s*/, ''))
+    queries = uniq(queries)
 
-    async.map(
-      queries,
-      function(query, next) {
-        program.log.debug("searching for %s", query);
-        search(program, query, next);
-      },
-      function(e, torrentsPerQuery) {
-        // No error should ever get here, search should return []
-        if (e) {
-          program.log.error("searching torrents", e);
-          return next(e);
-        }
+    // No error should ever be thrown here, search should return []
+    const torrents = flatten(
+      await Promise.all(queries.map(async query => search(query)))
+    )
 
-        var logQuery = queries.join(" OR ");
-        var torrents = _.flatten(torrentsPerQuery);
-        if (!torrents.length) {
-          program.log.info(
-            "episode %s wasn't found on torrent sites",
-            logQuery
-          );
-          return next();
-        }
+    const logQuery = queries.join(' OR ')
+    if (!torrents.length) {
+      program.log.info("episode %s wasn't found on torrent sites", logQuery)
+      return
+    }
 
-        // TODO extract to own filter step
-        var acceptedTorrents = filter(torrents);
-        program.log.debug(
-          "%s out of %s torrents remained for %s",
-          acceptedTorrents.length,
-          torrents.length,
-          logQuery
-        );
+    const acceptedTorrents = applyFilters(torrents)
+    program.log.debug(
+      '%s out of %s torrents remained for %s',
+      acceptedTorrents.length,
+      torrents.length,
+      logQuery
+    )
 
-        if (!acceptedTorrents.length) {
-          program.log.info(
-            "episode %s wasn't found because of filters",
-            logQuery
-          );
-          return next();
-        }
+    if (!acceptedTorrents.length) {
+      program.log.info("episode %s wasn't found because of filters", logQuery)
+      return
+    }
 
-        program.log.info("episode %s was found", logQuery);
-        return next(null, { episode: episode, torrent: acceptedTorrents[0] });
-      }
-    );
-  };
+    program.log.info('episode %s was found', logQuery)
+    return { episode, torrent: acceptedTorrents[0] }
+  }
 
-  var queue = async.queue(searchForEpisode, config.search.concurrency || 5);
+  return async function(episodes) {
+    try {
+      const results = await Promise.all(
+        episodes.map(async episode => {
+          return queue.add(async () => searchForEpisode(episode))
+        })
+      )
 
-  return function(episodes, next) {
-    var results = [];
-
-    queue.drain = function() {
-      queue.kill();
-      next(null, results);
-    };
-
-    var tasks = _.map(episodes, function(episode) {
-      return { episode: episode };
-    });
-
-    queue.push(tasks, function(e, r) {
-      if (e) {
-        program.log.error("search queue", e);
-      } else if (r) {
-        results.push(r);
-      }
-    });
-  };
-};
+      return results.filter(Boolean)
+    } catch (e) {
+      program.log.error('search queue', e.stack)
+      return []
+    }
+  }
+}

@@ -1,7 +1,7 @@
 FROM node:12-buster
 
 ENV INSTALL_DIRECTORY=/opt/tor_install \
-    APP_DIRECTORY=/opt/tor \
+		APP_DIRECTORY=/opt/tor \
 		WORKING_DIRECTORY=/var/tor
 
 WORKDIR $INSTALL_DIRECTORY

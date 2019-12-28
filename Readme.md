@@ -1,30 +1,23 @@
-tor
-=============
+# tor
 
-# Description
+## Description
 
-Simple tool for automatically downloading series. It is simple Flexget alternative for basic operations.
+Simple tool for automatically downloading shows. It is a Flexget alternative with basic functionality.
 
-- emit episodes from filesystem/custom command
+- emit episodes from filesystem/custom command and trakt.tv
 - find missing episodes (tvmaze)
-- search episodes on torrents (tpb, kat)
+- search episodes on torrents (rarbg or others)
 - push torrents/magnet URIs to Synology's download station
 - update trakt.tv
 
-# Usage
+## Install
 
-To install tor from npm, run:
-
-```
-$ npm install -g tor
+```sh
+npm install -g tor
 ```
 
-```tor --help```
+## Usage
 
-```tor missing```
-
-# License
-
-Copyright (c) 2015 Michal Brašna
-
-[MIT License](http://en.wikipedia.org/wiki/MIT_License)
+```sh
+tor missing
+```

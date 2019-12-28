@@ -1,52 +1,52 @@
-'use strict';
-
-module.exports = function (program, pluginConfig, cache) {
-  var traktService = require('../../services/trakt')(program, pluginConfig, cache);
+module.exports = function(program, cache, config) {
+  const traktService = require('../../services/trakt')(program, cache, config)
 
   return {
-    getWatchlist: function (done) {
-      var emitEpisodes = function (entities) {
-        return entities.map(function (entity) {
+    getWatchlist: async function() {
+      const emitEpisodes = function(entities) {
+        return entities.map(function(entity) {
           return {
             name: entity.show.title,
             path: entity.show.title,
             season: 0,
             episode: 0,
-            source: 'trakt'
-          };
-        });
-      };
+            source: 'trakt',
+          }
+        })
+      }
 
-      traktService.authAction(function (trakt, next) {
-        trakt.sync.watchlist.get({type: 'shows'})
-        .then(function (entities) {
-          next(null, emitEpisodes(entities));
-        }, next);
-      }, done);
+      try {
+        const entities = await traktService.getWatchlist()
+        return emitEpisodes(entities)
+      } catch (e) {
+        program.log.error('trakt: failed to get watchlist', e.stack)
+        return []
+      }
     },
-    getCollection: function (done) {
-      var emitEpisodes = function (entities) {
-        return entities.map(function (entity) {
-          return entity.seasons.map(function (season) {
-            return season.episodes.map(function (episode) {
+    getCollection: async function() {
+      const emitEpisodes = function(entities) {
+        return entities.map(function(entity) {
+          return entity.seasons.map(function(season) {
+            return season.episodes.map(function(episode) {
               return {
                 name: entity.show.title,
                 path: entity.show.title,
                 season: season.number,
                 episode: episode.number,
-                source: 'trakt'
-              };
-            });
-          });
-        });
-      };
+                source: 'trakt',
+              }
+            })
+          })
+        })
+      }
 
-      traktService.authAction(function (trakt, next) {
-        trakt.sync.collection.get({type: 'shows'})
-        .then(function (entities) {
-          next(null, emitEpisodes(entities));
-        }, next);
-      }, done);
-    }
-  };
-};
+      try {
+        const entities = await traktService.getCollection()
+        return emitEpisodes(entities)
+      } catch (e) {
+        program.log.error('trakt: failed to get collection', e.stack)
+        return []
+      }
+    },
+  }
+}

@@ -1,91 +1,75 @@
-"use strict";
+const {find, groupBy} = require('lodash')
+const moment = require('moment')
+const lookup = require('../lib/lookup')
+const formatters = require('../lib/formatters')
+const UnknownSeriesError = require('../lib/unknown-series-error')
 
-var async = require("async");
-var _ = require("lodash");
-var moment = require("moment");
-var lookup = require("../lib/lookup");
-var formatters = require("../lib/formatters");
+/*
+  Input episode structure
+  {
+    name: 'Archer.2009',
+    path: 'Archer',
+    season: 3,
+    episode: 4,
+    source: 'file/trakt/options',
+    extension: '.avi', // optional from 'file' source
+    originalFilename: 'Archer.2009.S03E04.WhiteElephant.avi' // optional from 'file' source
+  }
+*/
 
-module.exports = function(program, episodes, options, done) {
-  async.waterfall(
-    [
-      function(next) {
-        next(null, _.groupBy(episodes, "path"));
-      },
-      function(showsGroupedByName, next) {
-        program.log.debug("processing shows", Object.keys(showsGroupedByName));
-        async.mapSeries(
-          Object.keys(showsGroupedByName),
-          function(showName, next) {
-            async.waterfall(
-              [
-                function(next) {
-                  lookup(program, showName, options, next);
-                },
-                function(episodes, next) {
-                  async.reduce(
-                    episodes,
-                    [],
-                    function(missing, episode, next) {
-                      var SE = formatters.episode(
-                        episode.season,
-                        episode.episode
-                      );
+/*
+  Output episode structure
+  {
+    name: 'Archer',
+    season: 3,
+    episode: 4,
+  }
+*/
 
-                      if (
-                        !episode.airstamp ||
-                        moment(episode.airstamp).isAfter(moment())
-                      ) {
-                        program.log.debug("not yet aired %s %s", showName, SE);
-                      } else if (
-                        _.find(showsGroupedByName[showName], {
-                          season: episode.season,
-                          episode: episode.episode
-                        })
-                      ) {
-                        program.log.debug("owned %s %s", showName, SE);
-                      } else {
-                        program.log.info("missing %s %s", showName, SE);
-                        missing.push({
-                          name: showName,
-                          season: episode.season,
-                          episode: episode.episode
-                        });
-                      }
-                      next(null, missing);
-                    },
-                    next
-                  );
-                }
-              ],
-              function(e, missing) {
-                if (e === "unknown serie") {
-                  return next(null, []);
-                }
+module.exports = async function(program, episodes, options) {
+  const showsGroupedByName = groupBy(episodes, 'path')
+  const showNames = Object.keys(showsGroupedByName)
+  program.log.debug('processing shows', showNames)
 
-                if (e) {
-                  return next(e);
-                }
+  const allMissingEpisodes = []
+  for (let showName of showNames) {
+    const missingEpisodes = []
+    try {
+      const episodes = await lookup(program, program.config, showName, options)
+      for (let episode of episodes) {
+        const SE = formatters.episode(episode.season, episode.episode)
 
-                program.log.debug(
-                  "%s (%s missing)",
-                  showName,
-                  missing.length || "no"
-                );
-                next(null, missing);
-              }
-            );
-          },
-          function(e, missing) {
-            if (e) {
-              return next(e);
-            }
-
-            next(null, _.flatten(missing));
-          }
-        );
+        if (!episode.airstamp || moment(episode.airstamp).isAfter(moment())) {
+          program.log.debug('not yet aired %s %s', showName, SE)
+        } else if (
+          !find(showsGroupedByName[showName], {
+            season: episode.season,
+            episode: episode.episode,
+          })
+        ) {
+          program.log.info('missing %s %s', showName, SE)
+          missingEpisodes.push({
+            name: showName,
+            season: episode.season,
+            episode: episode.episode,
+          })
+        }
       }
-    ],
-    done
-  );
-};
+    } catch (e) {
+      if (e instanceof UnknownSeriesError) {
+        continue
+      }
+
+      throw e
+    }
+
+    program.log.debug(
+      '%s (%s missing)',
+      showName,
+      missingEpisodes.length || 'no'
+    )
+    allMissingEpisodes.push(...missingEpisodes)
+  }
+
+  return allMissingEpisodes
+}

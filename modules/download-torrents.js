@@ -1,65 +1,50 @@
-"use strict";
+const traktFactory = require('../plugins/output/trakt')
+const synologyFactory = require('../plugins/output/synology')
+const customCommandFactory = require('../plugins/output/custom-command')
 
-var async = require("async");
+/*
+  Input episode structure
+  {
+    episode: {
+      name: 'Archer',
+      season: 3,
+      episode: 4,
+    },
+    torrent: {
+      ...
+    }
+  }
+*/
 
-module.exports = function(program, episodes, options, config, done) {
-  var trakt = require("../plugins/output/trakt")(
-    program,
-    config.services.trakt,
-    program.config
-  );
-  var synology = require("../plugins/output/synology")(
-    program,
-    config.output.synology
-  );
-  var customCommand = require("../plugins/output/customCommand")(
+module.exports = async function(program, config, episodes, options) {
+  const trakt = traktFactory(program, program.config, config)
+  const synology = synologyFactory(program, config.output.synology)
+  const customCommand = customCommandFactory(
     program,
     config.output.customCommand
-  );
+  )
 
-  async.mapSeries(
-    episodes,
-    function(episode, next) {
-      program.log.info(
-        "downloading %s [%s, %s]",
-        episode.torrent.title,
-        episode.torrent.seeders + "/" + episode.torrent.leechers,
-        episode.torrent.source
-      );
+  let numTorrents = 0
+  for (let episode of episodes) {
+    program.log.info(
+      'downloading %s [%s, %s]',
+      episode.torrent.title,
+      episode.torrent.seeders + '/' + episode.torrent.leechers,
+      episode.torrent.source
+    )
 
-      async.series(
-        [
-          function(next) {
-            if (options.dryRun) {
-              return next();
-            }
+    if (options.dryRun) continue
+    numTorrents++
 
-            customCommand.exec(episode, next);
-          },
-          function(next) {
-            if (options.dryRun) {
-              return next();
-            }
+    await customCommand.exec(episode)
+    await synology.download(episode)
 
-            synology.download(episode, next);
-          },
-          function(next) {
-            if (options.dryRun || !options.trakt) {
-              return next();
-            }
+    if (!options.trakt) continue
+    await Promise.all([
+      trakt.addToCollection(episode),
+      trakt.removeFromWatchlist(episode),
+    ])
+  }
 
-            async.parallel(
-              [
-                trakt.addToCollection.bind(trakt, episode),
-                trakt.removeFromWatchlist.bind(trakt, episode)
-              ],
-              next
-            );
-          }
-        ],
-        next
-      );
-    },
-    done
-  );
-};
+  return numTorrents
+}

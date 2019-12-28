@@ -1,38 +1,32 @@
-'use strict';
+const path = require('path')
+const torrentParser = require('./torrent-parser')
+const customCommand = require('./custom-command')
 
-var path = require('path');
-var async = require('async');
-var _ = require('lodash');
-var parse = require('../../lib/torrent-parser');
-var glob = require('./filesystem/glob');
-var customCommand = require('./filesystem/customCommand');
+// TODO extract to input filters
+const allowedExt = ['.avi', '.mp4', '.mpg', '.mkv']
+const regex = /(Extras|Specials|Sample|E00)/
 
-module.exports = function (program, config, done) {
-  async.waterfall([
-    function (next) {
-      if (config.input.globs) {
-        glob(config.input.globs, next);
-      } else if (config.input.customCommand) {
-        customCommand(program, config.input.customCommand).exec(next);
-      } else {
-        program.log.error('no input specified');
-      }
-    },
-    function (filePaths, next) {
-      // TODO extract to input filters
-      var allowedExt = ['.avi', '.mp4', '.mpg', '.mkv'];
-      var regex = /(Extras|Specials|Sample|E00)/;
+module.exports = function(program, config) {
+  if (!config.input.customCommand) {
+    throw new Error('no input command specified')
+  }
 
-      program.log.debug('%s files found', filePaths.length);
-      var filtered = _.filter(filePaths, function (filePath) {
-        return _.indexOf(allowedExt, path.extname(filePath)) !== -1 && !regex.test(filePath);
-      });
+  return async function() {
+    const filePaths = await customCommand(program, config.input.customCommand)
+    program.log.debug('%s files found', filePaths.length)
 
-      program.log.debug('%s files remained after filter', filtered.length);
-      next(null, filtered);
-    },
-    function (filePaths, next) {
-      async.map(filePaths, parse.bind(null, program, config), next);
-    }
-  ], done);
-};
+    const filteredFilePaths = filePaths.filter(filePath => {
+      return (
+        allowedExt.indexOf(path.extname(filePath)) !== -1 &&
+        !regex.test(filePath)
+      )
+    })
+    program.log.debug('%s files after filter', filteredFilePaths.length)
+
+    return await Promise.all(
+      filteredFilePaths.map(filePath =>
+        torrentParser(program, config, filePath)
+      )
+    )
+  }
+}

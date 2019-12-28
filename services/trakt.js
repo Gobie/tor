@@ -1,79 +1,69 @@
-"use strict";
+const Trakt = require('trakt.tv')
+const open = require('open')
+const inquirer = require('inquirer')
+const DataLoader = require('dataloader')
 
-var Trakt = require("trakt.tv");
-var async = require("async");
-var open = require("open");
-var inquirer = require("inquirer");
-
-var enterPin = function(done) {
-  inquirer
-    .prompt([
-      {
-        type: "input",
-        name: "pin",
-        message: "Enter PIN from trakt.tv",
-        validate: function(value) {
-          var pass = value.match(/^[0-9A-Z]+$/);
-          if (pass) {
-            return true;
-          }
-
-          return "Please enter a valid PIN";
+const enterPin = async function() {
+  const answers = await inquirer.prompt([
+    {
+      type: 'input',
+      name: 'pin',
+      message: 'Enter PIN from trakt.tv',
+      validate: function(value) {
+        const pass = value.match(/^[0-9A-Z]+$/)
+        if (pass) {
+          return true
         }
-      }
-    ])
-    .then(function(answers) {
-      done(null, answers.pin);
-    }, done);
-};
 
-module.exports = function(program, pluginConfig, cache) {
-  var trakt = new Trakt(pluginConfig);
+        return 'Please enter a valid PIN'
+      },
+    },
+  ])
+
+  return answers.pin
+}
+
+module.exports = function(program, cache, config) {
+  const trakt = new Trakt(config.services.trakt)
+  const tokenKey = 'trakt:token'
+
+  const auth = async function() {
+    const token = cache.get(tokenKey)
+    if (token) {
+      // authenticated
+      const refreshedToken = await trakt.import_token(token)
+      cache.set(tokenKey, refreshedToken)
+    } else {
+      // authenticate
+      const authUrl = trakt.get_url()
+      program.log.info('trakt: authorize on %s', authUrl)
+      await open(authUrl)
+      const pin = await enterPin()
+      await trakt.exchange_code(pin)
+      cache.set(tokenKey, trakt.export_token())
+    }
+  }
+
+  const authDataLoader = new DataLoader(keys => {
+    return Promise.all(keys.map(key => auth()))
+  })
 
   return {
-    authAction: function(action, done) {
-      async.series(
-        [
-          // authenticate
-          function(next) {
-            if (cache.get("trakt:token")) {
-              return next();
-            }
-
-            program.log.info("trakt: authorize on %s", trakt.get_url());
-            open(trakt.get_url());
-            enterPin(function(e, pin) {
-              if (e) {
-                return next(e);
-              }
-
-              trakt.exchange_code(pin).then(function() {
-                cache.set("trakt:token", trakt.export_token());
-                next();
-              }, next);
-            });
-          },
-          // authenticated
-          function(next) {
-            trakt.import_token(cache.get("trakt:token")).then(function(token) {
-              // refresh token
-              cache.set("trakt:token", token);
-              next();
-            }, next);
-          }
-        ],
-        function(e) {
-          if (e) {
-            return done(e);
-          }
-
-          try {
-            action(trakt, done);
-          } catch (e) {
-            done(e.stack || e);
-          }
-        }
-      );
-    }
-  };
-};
+    getWatchlist: async function() {
+      await authDataLoader.load('')
+      return trakt.sync.watchlist.get({ type: 'shows' })
+    },
+    getCollection: async function() {
+      await authDataLoader.load('')
+      return trakt.sync.collection.get({ type: 'shows' })
+    },
+    addToCollection: async function(shows) {
+      await authDataLoader.load('')
+      return trakt.sync.collection.add(shows)
+    },
+    removeFromWatchlist: async function(shows) {
+      await authDataLoader.load('')
+      return trakt.sync.watchlist.remove(shows)
+    },
+  }
+}
