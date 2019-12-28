@@ -1,10 +1,10 @@
-module.exports = function(program, cache, config) {
+module.exports = (program, cache, config) => {
   const traktService = require('../../services/trakt')(program, cache, config)
 
   return {
-    getWatchlist: async function() {
-      const emitEpisodes = function(entities) {
-        return entities.map(function(entity) {
+    getWatchlist: async () => {
+      const emitEpisodes = entities => {
+        return entities.map(entity => {
           return {
             name: entity.show.title,
             path: entity.show.title,
@@ -23,11 +23,11 @@ module.exports = function(program, cache, config) {
         return []
       }
     },
-    getCollection: async function() {
-      const emitEpisodes = function(entities) {
-        return entities.map(function(entity) {
-          return entity.seasons.map(function(season) {
-            return season.episodes.map(function(episode) {
+    getCollection: async () => {
+      const emitEpisodes = entities => {
+        return entities.map(entity => {
+          return entity.seasons.map(season => {
+            return season.episodes.map(episode => {
               return {
                 name: entity.show.title,
                 path: entity.show.title,

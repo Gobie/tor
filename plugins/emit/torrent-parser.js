@@ -1,8 +1,8 @@
-var path = require('path')
-var ptn = require('parse-torrent-name')
+const path = require('path')
+const ptn = require('parse-torrent-name')
 
-var parseFilename = function(filename, options) {
-  var ext = path.extname(filename).toLowerCase()
+const parseFilename = (filename, options) => {
+  const ext = path.extname(filename).toLowerCase()
   // the following regex should match:
   //   Community S01E04.mp4
   //   Community s01e04.mp4
@@ -13,12 +13,12 @@ var parseFilename = function(filename, options) {
   //   Community/1x04.mp4
   //   Community/1-04.mp4
   //   Community/Season 1/Episode 4.mp4
-  var re = /(.*)\D(\d{1,2})[ex-](\d{1,2})/i
-  var searchResults = filename.match(re)
-  var show
-  var season
-  var episode
-  var offset
+  let re = /(.*)\D(\d{1,2})[ex-](\d{1,2})/i
+  let searchResults = filename.match(re)
+  let show
+  let season
+  let episode
+  let offset
 
   options = options || {}
 
@@ -88,11 +88,11 @@ var parseFilename = function(filename, options) {
   }
 }
 
-var parseMultiEpisode = function(filename) {
+const parseMultiEpisode = filename => {
   // the following regex should match:
   //   Community S01E04E5.mp4
-  var re = /^(.*?)(\d{1,2})([ex-])(\d{1,2})-?([ex-])(\d{1,2})(.*)$/i
-  var m = filename.match(re)
+  let re = /^(.*?)(\d{1,2})([ex-])(\d{1,2})-?([ex-])(\d{1,2})(.*)$/i
+  let m = filename.match(re)
 
   if (m !== null) {
     return [m[1] + m[2] + m[3] + m[4] + m[7], m[1] + m[2] + m[3] + m[6] + m[7]]
@@ -113,14 +113,14 @@ var parseMultiEpisode = function(filename) {
   return false
 }
 
-module.exports = async function(program, config, filePath) {
-  var fileName = path.basename(filePath)
-  var episodes = parseMultiEpisode(fileName) || [fileName]
-  var shows = []
-  var baseName
+module.exports = async (program, config, filePath) => {
+  const fileName = path.basename(filePath)
+  const episodes = parseMultiEpisode(fileName) || [fileName]
+  const shows = []
+  let baseName
 
-  for (var i = 0; i < episodes.length; ++i) {
-    var show = parseFilename(episodes[i])
+  for (let i = 0; i < episodes.length; ++i) {
+    let show = parseFilename(episodes[i])
 
     if (!show || !show.season || !show.episode) {
       program.log.debug('found weird episode', filePath)
@@ -141,7 +141,7 @@ module.exports = async function(program, config, filePath) {
     }
 
     if (show) {
-      var m = filePath.match(config.parser.accept)
+      const m = filePath.match(config.parser.accept)
       if (m === null) {
         program.log.warn('found weird directory structure', filePath)
         continue

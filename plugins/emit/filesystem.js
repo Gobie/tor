@@ -1,18 +1,19 @@
 const path = require('path')
 const torrentParser = require('./torrent-parser')
-const customCommand = require('./custom-command')
+const customCommandFactory = require('../../lib/custom-command')
 
 // TODO extract to input filters
 const allowedExt = ['.avi', '.mp4', '.mpg', '.mkv']
 const regex = /(Extras|Specials|Sample|E00)/
 
-module.exports = function(program, config) {
-  if (!config.input.customCommand) {
-    throw new Error('no input command specified')
-  }
+module.exports = (program, config) => {
+  const customCommand = customCommandFactory(
+    program,
+    config.input.customCommand
+  )
 
-  return async function() {
-    const filePaths = await customCommand(program, config.input.customCommand)
+  return async () => {
+    const filePaths = await customCommand()
     program.log.debug('%s files found', filePaths.length)
 
     const filteredFilePaths = filePaths.filter(filePath => {

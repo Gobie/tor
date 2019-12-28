@@ -3,38 +3,38 @@ var assert = require('assert')
 var exec = require('child_process').exec
 var path = require('path')
 
-describe('tor bin', function() {
+describe('tor bin', () => {
   var cmd =
     'WORKING_DIRECTORY=$(pwd) node ' + path.join(__dirname, '../bin/tor')
 
-  it('--help should run without errors', function(done) {
-    exec(cmd + ' --help', function(error) {
+  it('--help should run without errors', done => {
+    exec(cmd + ' --help', error => {
       assert.equal(error, null)
       done()
     })
   })
 
-  it('--version should run without errors', function(done) {
-    exec(cmd + ' --version', function(error) {
+  it('--version should run without errors', done => {
+    exec(cmd + ' --version', error => {
       assert.equal(error, null)
       done()
     })
   })
 
-  it('should return error on missing command', function(done) {
+  it('should return error on missing command', done => {
     this.timeout(4000)
 
-    exec(cmd, function(error) {
+    exec(cmd, error => {
       assert.ok(error)
       assert.equal(error.code, 1)
       done()
     })
   })
 
-  it.skip('should return error on unknown command', function(done) {
+  it.skip('should return error on unknown command', done => {
     this.timeout(4000)
 
-    exec(cmd + ' junkcmd', function(error) {
+    exec(cmd + ' junkcmd', error => {
       assert.ok(error)
       assert.equal(error.code, 1)
       done()

@@ -1,6 +1,6 @@
+const customCommandFactory = require('../lib/custom-command')
 const traktFactory = require('../plugins/output/trakt')
 const synologyFactory = require('../plugins/output/synology')
-const customCommandFactory = require('../plugins/output/custom-command')
 
 /*
   Input episode structure
@@ -16,7 +16,7 @@ const customCommandFactory = require('../plugins/output/custom-command')
   }
 */
 
-module.exports = async function(program, config, episodes, options) {
+module.exports = async (program, config, episodes, options) => {
   const trakt = traktFactory(program, program.config, config)
   const synology = synologyFactory(program, config.output.synology)
   const customCommand = customCommandFactory(
@@ -36,7 +36,7 @@ module.exports = async function(program, config, episodes, options) {
     if (options.dryRun) continue
     numTorrents++
 
-    await customCommand.exec(episode)
+    await customCommand(episode)
     await synology.download(episode)
 
     if (!options.trakt) continue

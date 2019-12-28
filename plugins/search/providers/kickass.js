@@ -6,17 +6,17 @@ var request = require('request')
 var xml2js = require('xml2js')
 var parser = new xml2js.Parser()
 
-var search = function(options, callback) {
+var search = (options, callback) => {
   _.defaults(options, { timeout: 10000 })
   var chunks = []
   var req = request(options)
   req.on('error', callback)
   var res = req.pipe(zlib.createGunzip())
   res.on('error', callback)
-  res.on('data', function(chunk) {
+  res.on('data', chunk => {
     chunks.push(chunk)
   })
-  res.on('end', function() {
+  res.on('end', () => {
     try {
       parser.parseString(Buffer.concat(chunks).toString(), callback)
     } catch (e) {
@@ -25,7 +25,7 @@ var search = function(options, callback) {
   })
 }
 
-module.exports = function(program, query, done) {
+module.exports = (program, query, done) => {
   program.log.debug('kat: searching for %s', query)
 
   search(
@@ -35,7 +35,7 @@ module.exports = function(program, query, done) {
         encodeURIComponent(query) +
         '%20category%3Atv%20is_safe%3A1/?rss=1&field=seeders&sorder=desc',
     },
-    function(e, results) {
+    (e, results) => {
       if (e) {
         program.log.error('kat', e)
         return done(null, [])
@@ -50,7 +50,7 @@ module.exports = function(program, query, done) {
 
       done(
         null,
-        torrents.map(function(torrent) {
+        torrents.map(torrent => {
           return {
             title: torrent.title[0],
             size: Number(torrent['torrent:contentLength'][0]),

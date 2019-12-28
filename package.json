@@ -27,7 +27,7 @@
     "autocmdr": "^0.0.8",
     "bytes": "^2.1.0",
     "child-process-promise": "^2.2.1",
-    "cloudscraper": "^1.4.0",
+    "cloudscraper": "^4.5.0",
     "commander": "^2.9.0",
     "dataloader": "^2.0.0",
     "humanize": "^0.0.9",
@@ -43,7 +43,7 @@
     "syno": "^2.1.0",
     "thepiratebay": "^1.4.7",
     "trakt.tv": "^7.2.0",
-    "xml2js": "0.4.16"
+    "xml2js": "^0.4.23"
   },
   "devDependencies": {
     "istanbul": "^0.4.1",

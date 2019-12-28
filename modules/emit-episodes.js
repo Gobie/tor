@@ -1,4 +1,4 @@
-const {flattenDeep} = require('lodash')
+const { flattenDeep } = require('lodash')
 
 /*
   Output episode structure
@@ -13,7 +13,7 @@ const {flattenDeep} = require('lodash')
   }
 */
 
-module.exports = async function(program, config, options) {
+module.exports = async (program, config, options) => {
   const filesystem = require('../plugins/emit/filesystem')(program, config)
   const trakt = require('../plugins/emit/trakt')(
     program,
@@ -23,7 +23,7 @@ module.exports = async function(program, config, options) {
 
   const episodes = await Promise.all([
     options.filesystem ? filesystem() : [],
-    options.addSeries.map(function(series) {
+    options.addSeries.map(series => {
       return {
         name: series,
         path: series,
@@ -37,7 +37,7 @@ module.exports = async function(program, config, options) {
   ])
 
   // TODO deduplicate episodes by name/season/episode
-  return flattenDeep(episodes).map(function(episode) {
+  return flattenDeep(episodes).map(episode => {
     // path is used as cache key, keys are namespaced by :
     episode.path = episode.path.replace(/:/, '')
     return episode

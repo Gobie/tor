@@ -1,8 +1,8 @@
-module.exports = function(program, cache, config) {
+module.exports = (program, cache, config) => {
   const traktService = require('../../services/trakt')(program, cache, config)
 
   return {
-    addToCollection: async function(episode) {
+    addToCollection: async episode => {
       const shows = {
         shows: [
           {
@@ -35,7 +35,7 @@ module.exports = function(program, cache, config) {
         program.log.error('trakt: saving episode had error output', shows, e)
       }
     },
-    removeFromWatchlist: function(episode) {
+    removeFromWatchlist: episode => {
       program.log.debug('trakt: removed from watchlist', episode)
       traktService.removeFromWatchlist({
         shows: [

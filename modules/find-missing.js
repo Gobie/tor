@@ -1,4 +1,4 @@
-const {find, groupBy} = require('lodash')
+const { find, groupBy } = require('lodash')
 const moment = require('moment')
 const lookup = require('../lib/lookup')
 const formatters = require('../lib/formatters')
@@ -26,7 +26,7 @@ const UnknownSeriesError = require('../lib/unknown-series-error')
   }
 */
 
-module.exports = async function(program, episodes, options) {
+module.exports = async (program, episodes, options) => {
   const showsGroupedByName = groupBy(episodes, 'path')
   const showNames = Object.keys(showsGroupedByName)
   program.log.debug('processing shows', showNames)

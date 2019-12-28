@@ -5,8 +5,8 @@ const findMissingEpisodes = require('../modules/find-missing')
 const searchTorrentsModuleFactory = require('../modules/search-torrents')
 const downloadTorrents = require('../modules/download-torrents')
 
-module.exports = function(program) {
-  const addSeriesCollector = function(val, memo) {
+module.exports = program => {
+  const addSeriesCollector = (val, memo) => {
     memo.push(val)
     return memo
   }
@@ -20,7 +20,7 @@ module.exports = function(program) {
     .option('--no-filesystem', 'Disable filesystem as source')
     .option('--add-series <value>', 'Add series', addSeriesCollector, [])
     .description('download all missing episodes')
-    .action(async function(options) {
+    .action(async options => {
       try {
         const config = require(path.join(
           process.env.WORKING_DIRECTORY,
@@ -48,6 +48,9 @@ module.exports = function(program) {
         program.log.info('[stats] downloaded %d torrents', numTorrents)
       } catch (e) {
         program.log.error(e.stack)
+
+        console.log()
+        console.log('=== original error ===')
         console.log(e)
       } finally {
         // cleanup: remove series, which were not accessed in last 6 months

@@ -1,46 +1,31 @@
-// Disabled: Requires cloudscraper
+const request = require('request-promise-native')
+const xml2js = require('xml2js')
+const parser = new xml2js.Parser()
 
-var _ = require('lodash')
-var request = require('request')
-var xml2js = require('xml2js')
-var parser = new xml2js.Parser()
-
-var search = function(options, done) {
-  _.defaults(options, { timeout: 10000 })
-  request(options, function(e, res, body) {
-    if (e) {
-      return done(e)
-    }
-    parser.parseString(body, done)
-  })
+const search = async options => {
+  const body = await request({ timeout: 10000, ...options })
+  return parser.parseStringPromise(body)
 }
 
-module.exports = function(program, query, done) {
-  program.log.debug('limetorrents: searching for %s', query)
-
-  search(
-    {
-      url:
+module.exports = program => {
+  return async query => {
+    try {
+      const uri =
         'https://www.limetorrents.info/searchrss/' +
         encodeURIComponent(query) +
-        '/',
-    },
-    function(e, results) {
-      if (e) {
-        program.log.error('limetorrents', e)
-        return done(null, [])
-      }
+        '/'
+      program.log.debug('limetorrents: [external call] search %s', uri)
+      const results = await search({ url: uri })
 
-      var torrents = results.rss.channel[0].item || []
+      const torrents = results.rss.channel[0].item || []
       program.log.debug(
         'limetorrents: found %s torrents for %s',
         torrents.length,
         query
       )
 
-      done(
-        null,
-        torrents.map(function(torrent) {
+      return Promise.all(
+        torrents.map(async torrent => {
           return {
             title: torrent.title[0],
             size: Number(torrent.size[0]),
@@ -55,6 +40,9 @@ module.exports = function(program, query, done) {
           }
         })
       )
+    } catch (e) {
+      program.log.error('limetorrents', e.stack)
+      return []
     }
-  )
+  }
 }

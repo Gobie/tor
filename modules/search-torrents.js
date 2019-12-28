@@ -1,4 +1,4 @@
-const {uniq, flatten, sortBy} = require('lodash')
+const { uniq, flatten, sortBy } = require('lodash')
 const { default: PQueue } = require('p-queue')
 const formatters = require('../lib/formatters')
 const filtersFactory = require('../lib/filters')
@@ -27,12 +27,15 @@ const filterTypesFactory = require('../plugins/search/filter-types')
   }
 */
 
-module.exports = function(program, config) {
+module.exports = (program, config) => {
   const queue = new PQueue({ concurrency: config.search.concurrency || 5 })
 
-  const providers = [require('../plugins/search/providers/rarbg')(program)]
+  const providers = [
+    require('../plugins/search/providers/rarbg')(program),
+    require('../plugins/search/providers/limetorrents')(program),
+  ]
 
-  const search = async function(query) {
+  const search = async query => {
     // No error should ever be thrown here, search providers return [] on error
     const torrents = await Promise.all(
       providers.map(provider => provider(query))
@@ -47,7 +50,7 @@ module.exports = function(program, config) {
     config.search.filters || []
   )
 
-  const searchForEpisode = async function(episode) {
+  const searchForEpisode = async episode => {
     const query = `${episode.name.replace(/[':]/, '')} ${formatters.episode(
       episode.season,
       episode.episode
@@ -86,7 +89,7 @@ module.exports = function(program, config) {
     return { episode, torrent: acceptedTorrents[0] }
   }
 
-  return async function(episodes) {
+  return async episodes => {
     try {
       const results = await Promise.all(
         episodes.map(async episode => {

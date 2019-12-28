@@ -3,13 +3,13 @@ const open = require('open')
 const inquirer = require('inquirer')
 const DataLoader = require('dataloader')
 
-const enterPin = async function() {
+const enterPin = async () => {
   const answers = await inquirer.prompt([
     {
       type: 'input',
       name: 'pin',
       message: 'Enter PIN from trakt.tv',
-      validate: function(value) {
+      validate: value => {
         const pass = value.match(/^[0-9A-Z]+$/)
         if (pass) {
           return true
@@ -23,11 +23,11 @@ const enterPin = async function() {
   return answers.pin
 }
 
-module.exports = function(program, cache, config) {
+module.exports = (program, cache, config) => {
   const trakt = new Trakt(config.services.trakt)
   const tokenKey = 'trakt:token'
 
-  const auth = async function() {
+  const auth = async () => {
     const token = cache.get(tokenKey)
     if (token) {
       // authenticated
@@ -49,19 +49,19 @@ module.exports = function(program, cache, config) {
   })
 
   return {
-    getWatchlist: async function() {
+    getWatchlist: async () => {
       await authDataLoader.load('')
       return trakt.sync.watchlist.get({ type: 'shows' })
     },
-    getCollection: async function() {
+    getCollection: async () => {
       await authDataLoader.load('')
       return trakt.sync.collection.get({ type: 'shows' })
     },
-    addToCollection: async function(shows) {
+    addToCollection: async shows => {
       await authDataLoader.load('')
       return trakt.sync.collection.add(shows)
     },
-    removeFromWatchlist: async function(shows) {
+    removeFromWatchlist: async shows => {
       await authDataLoader.load('')
       return trakt.sync.watchlist.remove(shows)
     },

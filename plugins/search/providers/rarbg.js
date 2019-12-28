@@ -1,12 +1,12 @@
 const NoResultsError = require('../../../lib/no-results-error')
 
-module.exports = function(program) {
+module.exports = program => {
   const rarbgService = require('../../../services/rarbg')(
     program,
     program.config
   )
 
-  return async function(query) {
+  return async query => {
     try {
       program.log.debug('rarbg: searching for %s', query)
       const torrents = await rarbgService.search({
@@ -20,7 +20,7 @@ module.exports = function(program) {
         query
       )
 
-      return torrents.map(function(torrent) {
+      return torrents.map(torrent => {
         return {
           title: torrent.title,
           size: Number(torrent.size),

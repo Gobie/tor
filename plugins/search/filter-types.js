@@ -1,9 +1,9 @@
 const formatters = require('../../lib/formatters')
 
-module.exports = function(program) {
+module.exports = program => {
   return {
-    minSize: function(minSize) {
-      return function(torrent) {
+    minSize: minSize => {
+      return torrent => {
         if (torrent.size < minSize) {
           program.log.debug(
             '%s skipped, size %s < %s',
@@ -16,8 +16,8 @@ module.exports = function(program) {
         return true
       }
     },
-    maxSize: function(maxSize) {
-      return function(torrent) {
+    maxSize: maxSize => {
+      return torrent => {
         if (torrent.size > maxSize) {
           program.log.debug(
             '%s skipped, size %s > %s',
@@ -30,8 +30,8 @@ module.exports = function(program) {
         return true
       }
     },
-    regex: function(regex) {
-      return function(torrent) {
+    regex: regex => {
+      return torrent => {
         if (regex.test(torrent.title)) {
           program.log.debug('%s skipped, blocked phrases', torrent.title)
           return false
@@ -39,8 +39,8 @@ module.exports = function(program) {
         return true
       }
     },
-    seeders: function(minSeeders) {
-      return function(torrent) {
+    seeders: minSeeders => {
+      return torrent => {
         if (torrent.seeders < minSeeders) {
           program.log.debug(
             '%s skipped, seeders %s < %s',

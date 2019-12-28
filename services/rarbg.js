@@ -6,7 +6,7 @@ const pRetry = require('p-retry')
 const DataLoader = require('dataloader')
 const NoResultsError = require('../lib/no-results-error')
 
-const query = async function(options) {
+const query = async options => {
   return request({
     timeout: 10000,
     headers: {
@@ -18,7 +18,7 @@ const query = async function(options) {
   })
 }
 
-const getToken = async function(program, appName) {
+const getToken = async (program, appName) => {
   const uri = url.format({
     protocol: 'https',
     host: 'torrentapi.org',
@@ -36,13 +36,13 @@ const getToken = async function(program, appName) {
   return token
 }
 
-const ensureToken = async function(program, cache) {
+const ensureToken = async (program, cache) => {
   const token = cache.get('rarbg:token')
   if (!token || moment.utc(token.expires).isBefore()) {
     const token = await getToken(program, program._name)
     cache.set('rarbg:token', {
       access_token: token,
-      expires: +moment().add(15, 'minutes'),
+      expires: Number(moment().add(15, 'minutes')),
     })
     return token
   }
@@ -50,7 +50,7 @@ const ensureToken = async function(program, cache) {
   return token.access_token
 }
 
-const search = async function(program, ensureTokenDataLoader, options) {
+const search = async (program, ensureTokenDataLoader, options) => {
   const token = await ensureTokenDataLoader.load('')
 
   const uri = url.format({
@@ -97,7 +97,7 @@ module.exports = (program, cache) => {
   return {
     search: async options => {
       return pRetry(() => search(program, ensureTokenDataLoader, options), {
-        retries: 3,
+        retries: 2,
       })
     },
   }
