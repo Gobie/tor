@@ -5,7 +5,7 @@ amd64:
 
 .PHONY: arm32v7
 arm32v7:
-	docker build -t gobie/tor:armhf --build-arg ARCH=arm32v7/node:lts-alpine .
+	docker build -t gobie/tor:arm32v7 --build-arg ARCH=arm32v7/node:lts-alpine .
 	docker push gobie/tor:arm32v7
 
 .PHONY: manifest
