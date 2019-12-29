@@ -39,7 +39,6 @@ module.exports = async (program, config, episodes, options) => {
     await customCommand(episode)
     await synology.download(episode)
 
-    if (!options.trakt) continue
     await Promise.all([
       trakt.addToCollection(episode),
       trakt.removeFromWatchlist(episode),

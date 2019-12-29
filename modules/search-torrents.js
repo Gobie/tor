@@ -33,6 +33,7 @@ module.exports = (program, config) => {
   const providers = [
     require('../plugins/search/providers/rarbg')(program),
     require('../plugins/search/providers/limetorrents')(program),
+    require('../plugins/search/providers/tpb')(program),
   ]
 
   const search = async query => {
