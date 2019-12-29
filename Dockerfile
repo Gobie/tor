@@ -1,4 +1,5 @@
-FROM node:12-buster
+ARG ARCH
+FROM $ARCH
 
 ENV INSTALL_DIRECTORY=/opt/tor_install \
 		APP_DIRECTORY=/opt/tor \
