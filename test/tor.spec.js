@@ -3,7 +3,9 @@ var assert = require('assert')
 var exec = require('child_process').exec
 var path = require('path')
 
-describe('tor bin', () => {
+describe('tor bin', function() {
+  this.timeout(4000)
+
   var cmd =
     'WORKING_DIRECTORY=$(pwd) node ' + path.join(__dirname, '../bin/tor')
 
@@ -22,8 +24,6 @@ describe('tor bin', () => {
   })
 
   it('should return error on missing command', done => {
-    this.timeout(4000)
-
     exec(cmd, error => {
       assert.ok(error)
       assert.equal(error.code, 1)
@@ -32,8 +32,6 @@ describe('tor bin', () => {
   })
 
   it.skip('should return error on unknown command', done => {
-    this.timeout(4000)
-
     exec(cmd + ' junkcmd', error => {
       assert.ok(error)
       assert.equal(error.code, 1)
