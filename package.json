@@ -11,9 +11,7 @@
     "coverage": "istanbul cover _mocha -- -R spec --bail --check-leaks test/**/*.spec.js",
     "lint": "prettier --write '**/*.js' bin/tor '!coverage/**/*.js'",
     "start": "WORKING_DIRECTORY=$(pwd) ./bin/tor missing",
-    "test": "npm run lint && npm run coverage && npm run check-coverage",
-    "build:armhf": "docker build -t gobie/tor:armhf -f Dockerfile_arm32v7 . && docker push gobie/tor:armhf",
-    "build:linux": "docker build -t gobie/tor . && docker push gobie/tor"
+    "test": "npm run lint && npm run coverage && npm run check-coverage"
   },
   "author": {
     "name": "Michal Brašna",
