@@ -90,8 +90,11 @@ const parseFilename = (filename, options) => {
 
 const parseMultiEpisode = filename => {
   // the following regex should match:
-  //   Community S01E04E5.mp4
-  let re = /^(.*?)(\d{1,2})([ex-])(\d{1,2})-?([ex-])(\d{1,2})(.*)$/i
+  //   Community S01E04E05.mp4
+  //   Community S01x04x05.mp4
+  //   Community S01-04-05.mp4
+  //   Community S01E04+E05.mp4
+  let re = /^(.*?)(\d{1,2})([ex-])(\d{1,2})[+-]?([ex-])(\d{1,2})(.*)$/i
   let m = filename.match(re)
 
   if (m !== null) {
